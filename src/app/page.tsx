@@ -7,6 +7,7 @@ import {
   connectWallet,
   getCurrentWalletConnected,
   buySim,
+  getNFTImage
 } from "../utils/interact.js";
 declare global {
   interface Window {
@@ -25,6 +26,7 @@ export default function Home() {
   const [status, setStatus] = useState<any>();
   const [message, setMessage] = useState("No connection to the network.");
   const [newMessage, setNewMessage] = useState("");
+  const [imageURL, setImageURL] = useState("");
   //called only once
   useEffect(() => {
     async function fetchMessage() {
@@ -88,6 +90,10 @@ export default function Home() {
     const { status } = await buySim(walletAddress);
     setStatus(status);
   };
+  const onGetNFTPressed = async () => {
+    const response = await getNFTImage(3);
+    setImageURL(response);
+  }
   return (
     <main>
       <div id="container">
@@ -109,6 +115,12 @@ export default function Home() {
             Buy Sim
           </button>
         </div>
+        <div>
+          <button id="publishButton" onClick={onGetNFTPressed}>
+            Get NFT
+          </button>
+        </div>
+        {imageURL?<Image src={imageURL} alt="NFT" width={250} height={250}/>:''}
       </div>
     </main>
   );

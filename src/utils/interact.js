@@ -135,3 +135,17 @@ export const nftContract = new web3.eth.Contract(
     abi,
     contractAddress
 );
+const extractCIDandImage = (uri) => {
+    const result = uri.split("/");
+    return [result[2], result[3]];
+}
+const constructGateway = (cid,image) => {
+    return "https://gateway.pinata.cloud/ipfs/" + cid + "/" + image;
+}
+export const getNFTImage = async (tokenId) => {
+    const uri = await nftContract.methods.tokenURI(tokenId).call();
+    const response = await fetch(uri);
+    const metadata = await response.json();
+    const [cid, image] = extractCIDandImage(metadata.image);
+    return constructGateway(cid, image);
+}

@@ -13,11 +13,19 @@ const signer = new ethers.Wallet(PRIVATE_KEY, alchemyProvider);
 // Contract
 const nftContract = new ethers.Contract(CONTRACT_ADDRESS, contract.abi, signer);
 
+function extractCIDandImage(uri){
+    const result = uri.split("/");
+    return [result[2], result[3]];
+}
+function constructGateway(cid,image){
+    return "https://gateway.pinata.cloud/ipfs/" + cid + "/" + image;
+}
+
 async function main() {
-    const secondSim = await nftContract.getSimDetails(1);
-    console.log("Second Genesis Sim Genes is: " + secondSim[1]);
-    console.log("Buy a new Sim....");
-    const txHash = await nftContract.buySim();
-    await txHash.wait();
+    const uri = await nftContract.tokenURI(3);
+    const response = await fetch(uri);
+    const metadata = await response.json();
+    const [cid, image] = extractCIDandImage(metadata.image);
+    console.log(constructGateway(cid, image));
 }
 main();

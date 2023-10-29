@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.21;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -364,7 +364,8 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, Ownabl
         ) = abi.decode(data, (uint8, uint8, uint8, uint8, uint8, uint8, uint8));
         return attributes;
     }
-        // The following functions are overrides required by Solidity.
+    
+    // The following functions are overrides required by Solidity.
 
     function _update(address to, uint256 tokenId, address auth)
         internal
