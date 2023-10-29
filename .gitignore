@@ -16,8 +16,6 @@
 #contract
 /artifacts
 /cache
-/contracts
-/scripts
 # production
 /build
 
