@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
+//0x18c4ae47b9Ec38d8352b414083F5332f0675a83d
 pragma solidity ^0.8.21;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 library UintAndByteConvert {
@@ -80,15 +80,20 @@ library UintAndByteConvert {
     }
 }
 
-contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
+contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage {
     using UintAndByteConvert for *;
     using Strings for uint256;
     string private  baseURI;
     string private  baseExtension = ".json";
-    uint256 private  cost = 0.05 ether;
     uint256 public maxSupply = 50;
     bool private  paused = false;
-    constructor(string memory _initBaseURI) ERC721("TheFunixCryptoSims", "FCS") Ownable(msg.sender) {
+    address payable public  owner;
+    modifier onlyOwner(){
+        require(owner == msg.sender);
+        _;
+    }
+    constructor(string memory _initBaseURI) ERC721("TheFunixCryptoSims", "FCS"){
+        owner = payable(msg.sender);
         setBaseURI(_initBaseURI);
         createGenesis();
     }
@@ -205,12 +210,12 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, Ownabl
     function createSim(
         uint256 matron,
         uint256 sire,
-        address owner
+        address simOwner
     ) internal returns (uint256) {
         uint256 supply = totalSupply();
         require(supply < maxSupply);
         require(!paused);
-        require(owner != address(0));
+        require(simOwner != address(0));
         uint32 newGenes = generateSimGenes(matron, sire);
         string memory _newURI = string.concat("https://gateway.pinata.cloud/ipfs/",baseURI,"/",Strings.toString(supply+1),".json");
 
@@ -364,7 +369,6 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, Ownabl
         ) = abi.decode(data, (uint8, uint8, uint8, uint8, uint8, uint8, uint8));
         return attributes;
     }
-    
     // The following functions are overrides required by Solidity.
 
     function _update(address to, uint256 tokenId, address auth)
@@ -398,5 +402,133 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, Ownabl
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
+    }
+
+    // NFT Marketplace functions
+    struct Listing {
+        address payable  seller;
+        uint256 price;
+        address payable escrow;
+        bool sold;
+    }
+
+    event ListingItemCreated(
+        address seller,
+        uint256 price,
+        address escrow,
+        bool sold
+    );
+
+    mapping(uint256 => Listing) public listings;
+    uint256 private listingItemCount = 0;
+    mapping(uint256 => uint256) public escrowAmounts;
+    uint256 private  listingPrice = 0.025 ether;
+    uint256 public itemsSold = 0;
+
+    function updateListingPrice(uint256 _newPrice) public onlyOwner {
+        listingPrice = _newPrice;
+    }
+    function getListingPrice() public view returns(uint256){
+        return listingPrice;
+    }
+
+    function listNFT(uint256 tokenId, uint256 price) public payable {
+        require(tokenId != 0 && tokenId != 1, "Genesis are not for sale");
+        require(price > 0, "Price must be atleast 1");
+        require(msg.value == listingPrice + price, "Must pay enough for listing");
+        require(_ownerOf(tokenId) == msg.sender, "Not your token");
+        Listing memory _newListing = Listing(
+            payable(msg.sender),
+            price,
+            payable(address(this)), // Contract as escrow
+            false
+        );
+        listings[tokenId] = _newListing;
+        // Transfer NFT to contract
+        _transfer(msg.sender, address(this), tokenId);
+
+        escrowAmounts[tokenId] = _newListing.price;
+        listingItemCount++;
+
+        emit ListingItemCreated(msg.sender, price, address(this), false);
+    }
+    function cancelListNFT(uint256 tokenId) public {
+        require(listings[tokenId].seller == msg.sender,"You are not the seller");
+        // Transfer NFT to seller
+        _transfer(address(this), msg.sender, tokenId);
+        payable(msg.sender).transfer(listings[tokenId].price);
+        listingItemCount--;
+        delete listings[tokenId];
+        delete escrowAmounts[tokenId];
+    }
+    function reListNFT(uint256 tokenId, uint256 price) public payable {
+        require(listings[tokenId].escrow == msg.sender, "Only item owner can perforn this additional operation!");
+        require(msg.value == listingPrice + price, "Must pay the listing price");
+        listings[tokenId].price = price;
+        listings[tokenId].seller = payable(msg.sender);
+        listings[tokenId].sold = false;
+        listings[tokenId].escrow = payable(address(this));
+        itemsSold -= 1;
+        // Transfer NFT to contract
+        _transfer(msg.sender, address(this), tokenId);
+        escrowAmounts[tokenId] = price;
+    }
+    function buyNFT(uint256 tokenId) public payable {
+        Listing storage listing = listings[tokenId];
+        require(msg.value == listing.price);
+
+        listings[tokenId].escrow = payable(msg.sender);
+        listings[tokenId].sold = true;
+
+        itemsSold++;
+
+
+        // Transfer listing price to contract owner
+        payable(owner).transfer(listingPrice);
+
+        // Transfer NFT to buyer
+        _transfer(address(this), msg.sender, tokenId);
+        approve(address(this), tokenId);
+
+        // Release funds to seller
+        uint256 escrowAmount = escrowAmounts[tokenId];
+        payable(listing.seller).transfer(escrowAmount);
+        payable(listing.seller).transfer(msg.value);
+
+        // Delete escrow amount after transfer
+        delete escrowAmounts[tokenId];
+    }
+    function fetchMarketItem() public view returns(Listing[] memory){
+        uint256 unSoldItemCount = listingItemCount - itemsSold;
+        uint256 currentIndex = 0;
+        Listing[] memory items = new Listing[](unSoldItemCount);
+        for(uint i=0;i<sims.length;i++){
+            if(listings[i+1].escrow == address(this)){
+                uint256 currentId = i + 1;
+                Listing storage currentItem = listings[currentId];
+                items[currentIndex] = currentItem;
+                currentIndex += 1;
+            }
+        }   
+        return items;
+    }
+    function fetchListedItem() public view returns(Listing[] memory){
+        uint256 itemCount = 0;
+        uint256 currentIndex = 0;
+        for(uint256 i=0;i<sims.length;i++){
+            if(listings[i].seller == msg.sender){
+                itemCount++;
+            }
+        }
+        Listing[] memory items = new Listing[](itemCount);
+        for(uint256 i=0;i<sims.length;i++){
+            if(listings[i+1].seller == msg.sender){
+                uint256 currentId = i + 1;
+                Listing storage currentItem = listings[currentId];
+                items[currentIndex] = currentItem;
+                currentIndex += 1;
+            }
+        }
+        return items;
     }
 }
