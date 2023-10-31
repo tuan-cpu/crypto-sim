@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 library UintAndByteConvert {
     function bytesToUintArray(bytes memory data)
@@ -530,5 +531,85 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage {
             }
         }
         return items;
+    }
+}
+
+contract NFTAuction is IERC721Receiver{
+    function onERC721Received(address operator, address from, uint256 tokenId, bytes calldata data) pure external override returns (bytes4) {
+        return IERC721Receiver.onERC721Received.selector;
+    }
+    TheFunixCryptoSim public nftContract; // NFT contract
+    address public owner;
+    uint256 public auctionFee = 0.025 ether;
+
+    constructor(address _nftContract) {
+        nftContract = TheFunixCryptoSim(_nftContract);
+        owner = msg.sender;
+    }
+    modifier onlyOwner(){
+        require(owner == msg.sender);
+        _;
+    }
+
+    struct Auction {
+        address seller;
+        uint256 minBid;
+        address highestBidder;
+        uint256 highestBid;
+        uint256 endTimestamp;
+    }
+
+    mapping(uint256 => Auction) public auctions;
+
+    function createAuction(
+        uint256 tokenId,
+        uint256 minBid,
+        uint256 duration
+    ) external payable  {
+        require(msg.value == 0.025 ether);
+        // Transfer NFT to contract
+        nftContract.safeTransferFrom(msg.sender,address(this),tokenId);
+
+        // Create auction
+        auctions[tokenId] = Auction(
+            msg.sender,
+            minBid,
+            address(0),
+            0,
+            block.timestamp + duration
+        );
+    }
+
+    function bid(uint256 tokenId) external payable {
+        Auction storage auction = auctions[tokenId];
+        require(block.timestamp < auction.endTimestamp);
+        require(msg.value > auction.highestBid);
+
+        if (auction.highestBidder != address(0)) {
+            // Refund previous bidder
+            payable(auction.highestBidder).transfer(auction.highestBid);
+        }
+
+        // Update auction
+        auction.highestBidder = msg.sender;
+        auction.highestBid = msg.value;
+    }
+
+    function settleAuction(uint256 tokenId) external onlyOwner{
+        Auction storage auction = auctions[tokenId];
+        require(block.timestamp > auction.endTimestamp);
+
+        // Transfer NFT to highest bidder
+        nftContract.safeTransferFrom(
+            address(this),
+            auction.highestBidder,
+            tokenId
+        );
+
+        // Pay seller
+        payable(auction.seller).transfer(auction.highestBid);
+
+        // Delete auction
+        delete auctions[tokenId];
     }
 }
