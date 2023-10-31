@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
-//0x18c4ae47b9Ec38d8352b414083F5332f0675a83d
+//0x11Ee534e1b149536c191e35846815bb0776b8a44
+//0xAdb19E4A340be4db9ACE7D713a5a0325c1e37816
 pragma solidity ^0.8.21;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -81,27 +82,7 @@ library UintAndByteConvert {
     }
 }
 
-contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage {
-    using UintAndByteConvert for *;
-    using Strings for uint256;
-    string private  baseURI;
-    string private  baseExtension = ".json";
-    uint256 public maxSupply = 50;
-    bool private  paused = false;
-    address payable public  owner;
-    modifier onlyOwner(){
-        require(owner == msg.sender);
-        _;
-    }
-    constructor(string memory _initBaseURI) ERC721("TheFunixCryptoSims", "FCS"){
-        owner = payable(msg.sender);
-        setBaseURI(_initBaseURI);
-        createGenesis();
-    }
-    function setBaseURI(string memory _newBaseURI) public onlyOwner {
-        baseURI = _newBaseURI;
-    }
-
+abstract contract CryptoSimBase {
     // This struct will be used to represent the attributes of CryptoSim
     struct SimAttributes {
         // 0 -> 3
@@ -128,7 +109,7 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage {
     }
 
     // List of existing sims. Use as CryptoSims' "database"
-    Sim[] private  sims;
+    Sim[] public sims;
 
     // Event that will be emitted whenever a new sim is created
     event Birth(
@@ -138,7 +119,6 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage {
         uint256 sireId,
         uint32 genes
     );
-
     function generateSimGenes(uint256 matronId, uint256 sireId)
         internal
         view
@@ -207,7 +187,78 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage {
         attributes.body = (matronAttr.body * sireAttr.body + 3) % 4;
         return encodeAttributes(attributes);
     }
+    function getSimDetails(uint256 simId)
+        external
+        view
+        returns (
+            uint256,
+            uint32,
+            uint256,
+            uint256
+        )
+    {
+        Sim storage sim = sims[simId];
+        return (simId, sim.genes, sim.matronId, sim.sireId);
+    }
+    function encodeAttributes(SimAttributes memory attributes)
+        internal 
+        pure
+        returns (uint32)
+    {
+        uint32 genes = 0;
+        genes = UintAndByteConvert.combineUintArrayToUint32(
+            UintAndByteConvert.bytesToUintArray(abi.encode(attributes))
+        );
+        return genes;
+    }
 
+    function decodeAttributes(uint32 genes)
+        internal 
+        pure
+        returns (SimAttributes memory)
+    {
+        SimAttributes memory attributes = SimAttributes({
+            body: 0,
+            eye: 0,
+            hairstyle: 0,
+            outfit: 0,
+            accessory: 0,
+            hiddenGenes: 0,
+            generation: 0
+        });
+        bytes memory data = UintAndByteConvert.uintToBytes(genes);
+        (
+            attributes.body,
+            attributes.eye,
+            attributes.hairstyle,
+            attributes.outfit,
+            attributes.accessory,
+            attributes.hiddenGenes,
+            attributes.generation
+        ) = abi.decode(data, (uint8, uint8, uint8, uint8, uint8, uint8, uint8));
+        return attributes;
+    }
+}
+
+contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, CryptoSimBase {
+    using UintAndByteConvert for *;
+    using Strings for uint256;
+    string private  baseURI;
+    string private  baseExtension = ".json";
+    uint256 public maxSupply = 50;
+    address payable public  owner;
+    modifier onlyOwner(){
+        require(owner == msg.sender);
+        _;
+    }
+    constructor(string memory _initBaseURI) ERC721("TheFunixCryptoSims", "FCS"){
+        owner = payable(msg.sender);
+        setBaseURI(_initBaseURI);
+        createGenesis();
+    }
+    function setBaseURI(string memory _newBaseURI) public onlyOwner {
+        baseURI = _newBaseURI;
+    }
     function createSim(
         uint256 matron,
         uint256 sire,
@@ -215,7 +266,6 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage {
     ) internal returns (uint256) {
         uint256 supply = totalSupply();
         require(supply < maxSupply);
-        require(!paused);
         require(simOwner != address(0));
         uint32 newGenes = generateSimGenes(matron, sire);
         string memory _newURI = string.concat("https://gateway.pinata.cloud/ipfs/",baseURI,"/",Strings.toString(supply+1),".json");
@@ -227,6 +277,7 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage {
         });
         sims.push(newSim);
         _safeMint(owner,supply);
+        _setTokenURI(supply,_newURI);
         emit Birth(
             owner,
             supply,
@@ -234,7 +285,6 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage {
             newSim.sireId,
             newSim.genes
         );
-        _setTokenURI(supply,_newURI);
         return supply;
     }
 
@@ -296,21 +346,6 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage {
         // require(msg.value == 0.05 ether);
         return createSim(matronId, sireId, msg.sender);
     }
-
-    function getSimDetails(uint256 simId)
-        external
-        view
-        returns (
-            uint256,
-            uint32,
-            uint256,
-            uint256
-        )
-    {
-        Sim storage sim = sims[simId];
-        return (simId, sim.genes, sim.matronId, sim.sireId);
-    }
-
     function ownedSims() external view returns (uint256[] memory) {
         uint256 simCount = balanceOf(msg.sender);
         if (simCount == 0) {
@@ -330,45 +365,6 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage {
             }
             return result;
         }
-    }
-
-    function encodeAttributes(SimAttributes memory attributes)
-        internal 
-        pure
-        returns (uint32)
-    {
-        uint32 genes = 0;
-        genes = UintAndByteConvert.combineUintArrayToUint32(
-            UintAndByteConvert.bytesToUintArray(abi.encode(attributes))
-        );
-        return genes;
-    }
-
-    function decodeAttributes(uint32 genes)
-        internal 
-        pure
-        returns (SimAttributes memory)
-    {
-        SimAttributes memory attributes = SimAttributes({
-            body: 0,
-            eye: 0,
-            hairstyle: 0,
-            outfit: 0,
-            accessory: 0,
-            hiddenGenes: 0,
-            generation: 0
-        });
-        bytes memory data = UintAndByteConvert.uintToBytes(genes);
-        (
-            attributes.body,
-            attributes.eye,
-            attributes.hairstyle,
-            attributes.outfit,
-            attributes.accessory,
-            attributes.hiddenGenes,
-            attributes.generation
-        ) = abi.decode(data, (uint8, uint8, uint8, uint8, uint8, uint8, uint8));
-        return attributes;
     }
     // The following functions are overrides required by Solidity.
 
@@ -546,6 +542,7 @@ contract NFTAuction is IERC721Receiver{
         nftContract = TheFunixCryptoSim(_nftContract);
         owner = msg.sender;
     }
+
     modifier onlyOwner(){
         require(owner == msg.sender);
         _;
@@ -565,7 +562,7 @@ contract NFTAuction is IERC721Receiver{
         uint256 tokenId,
         uint256 minBid,
         uint256 duration
-    ) external payable  {
+    ) external payable {
         require(msg.value == 0.025 ether);
         // Transfer NFT to contract
         nftContract.safeTransferFrom(msg.sender,address(this),tokenId);
@@ -578,6 +575,16 @@ contract NFTAuction is IERC721Receiver{
             0,
             block.timestamp + duration
         );
+    }
+
+    function cancelAuction(uint256 tokenId) public{
+        require(auctions[tokenId].seller == msg.sender, "You must be the seller to cancel this auction");
+        require(block.timestamp < auctions[tokenId].endTimestamp);
+        // Transfer NFT to to the seller
+        nftContract.safeTransferFrom(address(this),msg.sender,tokenId);
+
+        // delete auction
+        delete auctions[tokenId];
     }
 
     function bid(uint256 tokenId) external payable {
@@ -611,5 +618,9 @@ contract NFTAuction is IERC721Receiver{
 
         // Delete auction
         delete auctions[tokenId];
+    }
+
+    function withdraw() public onlyOwner {
+        payable(owner).transfer(address(this).balance);
     }
 }
