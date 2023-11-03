@@ -107,7 +107,7 @@
 /* //--------SIDEBAR */
 
 .sideBar{
-    /* position: fixed; */
+    position: fixed;
     top: 0;
     width: auto;
     background-color: var(--main-bg-color);
@@ -124,16 +124,16 @@
 
 @media screen and (min-width: 320px) and (max-width: 768px){
     .navbar_container{
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: none;
+        grid-template-rows: 1fr 1fr;
+        justify-content: center;
+        justify-items: center;
     }
     .navbar_container_left{
         grid-template-columns: 1fr;
     }
     .navbar_container_right{
         grid-template-columns: repeat(3, 1fr);
-    }
-    .navbar_container_right:last-child{
-        grid-column: 1 / span 3;
     }
     .navbar_container_right_menuBtn{
         display: block;

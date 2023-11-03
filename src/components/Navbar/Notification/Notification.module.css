@@ -19,10 +19,14 @@
 
 .notification_box{
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem;
     padding: .5rem;
     transition: all .3s ease-in;
+}
+.notification_box_details{
+    display: flex;
+    align-items: center;
 }
 
 .notification_box:hover{
@@ -49,6 +53,7 @@
     height: .5rem;
     border-radius: 50%;
     background-color: aqua;
+    margin-top:.7rem;
 }
 
 @media screen and (max-width: 35rem) {

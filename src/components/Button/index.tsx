@@ -10,7 +10,7 @@ interface ButtonProps{
 const Button:React.FC<ButtonProps> = ({ btnText, handleClick }) => {
   return (
     <div className={Style.box}>
-      <button className={Style.button} onClick={()=>handleClick()}>
+      <button type="button" className={Style.button} onClick={()=>handleClick()}>
         {btnText}
       </button>
     </div>

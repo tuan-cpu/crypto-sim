@@ -153,3 +153,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+export { Discover, HelpCenter };
