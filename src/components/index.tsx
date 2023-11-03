@@ -10,6 +10,7 @@ import Category from "./Category";
 import Filter from "./Filter";
 import NFTCard from "./NFTCard/NFTCard";
 import Collection from "./Collection";
+import FollowerTab from "./FollowerTab";
 
 export {
   Navbar,
@@ -23,5 +24,6 @@ export {
   Category,
   Filter,
   NFTCard,
-  Collection
+  Collection,
+  FollowerTab
 };
