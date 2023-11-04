@@ -4,7 +4,6 @@ import { motion, useAnimation } from "framer-motion";
 
 //INTERNAL IMPORT
 import Style from "./SliderCard.module.css";
-import images from "../../../img";
 import { LikeProfile } from "@/components";
 interface CardProps {
   index: number;
@@ -17,7 +16,7 @@ const SliderCard: React.FC<CardProps> = ({ element, index }) => {
       <div className={Style.sliderCard_box}>
         <motion.div className={Style.sliderCard_box_img}>
           <Image
-            src={images.creatorbackground10}
+            src={element.background}
             alt="slider-profile"
             width={500}
             height={300}

@@ -16,7 +16,8 @@ import {
   FollowerTab,
   AudioLive,
   Slider,
-  Brand
+  Brand,
+  Video
 } from "@/components";
 
 const Home = () => {
@@ -31,6 +32,7 @@ const Home = () => {
           paragraph="Discover the most outstanding NFTs in all topics of life."
         />
         <AudioLive/>
+        <Video/>
         <FollowerTab/>
         <Slider/>
         <Collection/>

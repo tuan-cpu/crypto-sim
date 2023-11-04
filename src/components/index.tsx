@@ -15,6 +15,7 @@ import AudioLive from "./AudioLive";
 import LikeProfile from "./LikeProfile";
 import Slider from "./Slider";
 import Brand from "./Brand";
+import Video from "./Video";
 
 export {
   Navbar,
@@ -33,5 +34,6 @@ export {
   AudioLive,
   LikeProfile,
   Slider,
-  Brand
+  Brand,
+  Video
 };

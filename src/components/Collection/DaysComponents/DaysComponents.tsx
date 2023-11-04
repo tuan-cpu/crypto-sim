@@ -5,14 +5,17 @@ import { MdVerified } from "react-icons/md";
 //INTERNAL IMPORT
 import Style from "./DaysComponents.module.css";
 import images from "../../../img";
+interface Props{
+  element: any
+}
 
-const DaysComponents = () => {
+const DaysComponents:React.FC<Props> = ({element}) => {
   return (
     <div className={Style.daysComponent}>
       <div className={Style.daysComponent_box}>
         <div className={Style.daysComponent_box_img}>
           <Image
-            src={images.creatorbackground1}
+            src={element.background}
             className={Style.daysComponent_box_img_img}
             alt="profile-background"
             width={500}
@@ -47,7 +50,7 @@ const DaysComponents = () => {
           <div className={Style.daysComponent_box_title_info}>
             <div className={Style.daysComponent_box_title_info_profile}>
               <Image
-                src={images.user1}
+                src={element.user}
                 alt="profile"
                 width={50}
                 height={50}

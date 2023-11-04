@@ -6,7 +6,6 @@ import { BiAward } from "react-icons/bi";
 
 //INTERNAL IMPORT
 import Style from "./FollowerTabCard.module.css";
-import images from "../../../img";
 
 interface TabProps {
   index: number;
@@ -28,26 +27,24 @@ const FollowerTabCard: React.FC<TabProps> = ({ index, element }) => {
         </p>
       </div>
       <div className={Style.followerTabCard_box}>
-        <div className={Style.followerTabCard_box_box}>
-        <div className={Style.followerTabCard_box_img}>
-          <Image
-            src={images.creatorbackground1}
-            alt="profile-background"
-            width={500}
-            height={500}
-            className={Style.followerTabCard_box_img_img}
-          />
-        </div>
-        <div className={Style.followerTabCard_box_profile}>
-          <Image
-            className={Style.followerTabCard_box_profile_img}
-            alt="profile-picture"
-            width={85}
-            height={85}
-            src={images.user1}
-          />
-        </div>
-        </div>
+          <div className={Style.followerTabCard_box_img}>
+            <Image
+              src={element.background}
+              alt="profile-background"
+              width={500}
+              height={500}
+              className={Style.followerTabCard_box_img_img}
+            />
+          </div>
+          <div className={Style.followerTabCard_box_profile}>
+            <Image
+              className={Style.followerTabCard_box_profile_img}
+              alt="profile-picture"
+              width={85}
+              height={85}
+              src={element.user}
+            />
+          </div>
         <div className={Style.followerTabCard_box_info}>
           <div className={Style.followerTabCard_box_info_name}>
             <h4>

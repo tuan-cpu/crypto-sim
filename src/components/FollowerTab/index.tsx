@@ -4,16 +4,84 @@ import {
   RiUserUnfollowFill,
   RiAwardLine,
 } from "react-icons/ri";
+import Link from "next/link";
 
 //INTERNAL IMPORT
 import Style from "./FollowerTab.module.css";
 import FollowerTabCard from "./FollowerTabCard";
-import Link from "next/link";
+import images from "../../img";
 
 const FollowerTab = () => {
-  const cardArray = [1, 2, 3, 4, 5, 6, 7, 8];
-  const followingArray = [1, 2, 3, 4, 5, 6];
-  const newsArray = [1, 2, 3, 4];
+  const cardArray = [
+    {
+      background: images.creatorbackground1,
+      user: images.user1
+    },
+    {
+      background: images.creatorbackground2,
+      user: images.user2
+    },
+    {
+      background: images.creatorbackground3,
+      user: images.user3
+    },
+    {
+      background: images.creatorbackground4,
+      user: images.user4
+    },
+    {
+      background: images.creatorbackground5,
+      user: images.user5
+    },
+    {
+      background: images.creatorbackground6,
+      user: images.user6
+    },
+    {
+      background: images.creatorbackground7,
+      user: images.user7
+    },
+  ];
+  const followingArray = [
+    {
+      background: images.creatorbackground1,
+      user: images.user1
+    },
+    {
+      background: images.creatorbackground6,
+      user: images.user6
+    },
+    {
+      background: images.creatorbackground7,
+      user: images.user7
+    },
+    {
+      background: images.creatorbackground4,
+      user: images.user4
+    },
+  ];
+  const newsArray = [
+    {
+      background: images.creatorbackground5,
+      user: images.user5
+    },
+    {
+      background: images.creatorbackground6,
+      user: images.user6
+    },
+    {
+      background: images.creatorbackground7,
+      user: images.user7
+    },
+    {
+      background: images.creatorbackground2,
+      user: images.user2
+    },
+    {
+      background: images.creatorbackground3,
+      user: images.user3
+    }
+  ];
   const [popular, setPopular] = useState(true);
   const [following, setFollowing] = useState(false);
   const [news, setNews] = useState(false);
@@ -73,8 +141,8 @@ const FollowerTab = () => {
       )}
       <div className={Style.followerTab_member}>
         <div className={Style.followerTab_member_box}>
-          <Link href={{pathname:'#'}}>Show me more</Link>
-          <Link href={{pathname:'#'}}>Become author</Link>
+          <Link href={{ pathname: "#" }}>Show me more</Link>
+          <Link href={{ pathname: "#" }}>Become author</Link>
         </div>
       </div>
     </div>

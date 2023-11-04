@@ -7,14 +7,21 @@ import Style from "./Category.module.css";
 import images from "../../img";
 
 const Category = () => {
-  const categoryArray = [1, 2, 3, 4, 5, 6];
+  const categoryArray = [
+    images.creatorbackground1,
+    images.creatorbackground2,
+    images.creatorbackground3,
+    images.creatorbackground4,
+    images.creatorbackground5,
+    images.creatorbackground6,
+  ];
   return (
     <div className={Style.box_category}>
       <div className={Style.category}>
         {categoryArray.map((element, index) => (
           <div key={index + 1} className={Style.category_box}>
             <Image
-              src={images.creatorbackground1}
+              src={element}
               alt="creator-background"
               width={350}
               height={150}

@@ -41,6 +41,7 @@
 .sliderCard_box_price_box{
     border: 1px solid var(--icons-color);
     padding: .2rem 1rem;
+    margin-left: 10px;
     border-radius: .2rem;
 }
 .sliderCard_box_price_box small{
@@ -61,9 +62,10 @@
     display: grid;
     position: relative;
     top: -7px;
+    padding: 5px;
 }
 .sliderCard_box_price_time p{
-    font-size: 1.3rem;
+    font-size: 1rem;
     font-weight: 700;
 }
 
@@ -79,6 +81,7 @@
     }
     .sliderCard_box_price_box{
         padding: .2rem;
+        margin-left: 0;
     }
     .sliderCard_box_price_time p{
         font-size: 1rem;
