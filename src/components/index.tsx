@@ -11,6 +11,10 @@ import Filter from "./Filter";
 import NFTCard from "./NFTCard/NFTCard";
 import Collection from "./Collection";
 import FollowerTab from "./FollowerTab";
+import AudioLive from "./AudioLive";
+import LikeProfile from "./LikeProfile";
+import Slider from "./Slider";
+import Brand from "./Brand";
 
 export {
   Navbar,
@@ -25,5 +29,9 @@ export {
   Filter,
   NFTCard,
   Collection,
-  FollowerTab
+  FollowerTab,
+  AudioLive,
+  LikeProfile,
+  Slider,
+  Brand
 };

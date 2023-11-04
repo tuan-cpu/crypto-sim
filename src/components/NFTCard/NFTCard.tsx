@@ -23,7 +23,7 @@ const NFTCard = () => {
               alt="NFT Image"
               width={600}
               height={600}
-              className={Style.nftCard_box_img_mg}
+              className={Style.nftCard_box_img_img}
             />
           </div>
           <div className={Style.nftCard_box_update}>
