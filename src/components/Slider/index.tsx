@@ -1,55 +1,63 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, useAnimation } from 'framer-motion';
-import { TiArrowLeftThick, TiArrowRightThick } from 'react-icons/ti';
+import React, { useState, useEffect, useRef } from "react";
+import { motion, useAnimation } from "framer-motion";
+import { TiArrowLeftThick, TiArrowRightThick } from "react-icons/ti";
 
 //INTERNAL IMPORT
-import Style from './Slider.module.css';
-import SliderCard from './SliderCard/SliderCard';
-import images from '../../img';
+import Style from "./Slider.module.css";
+import SliderCard from "./SliderCard/SliderCard";
+import images from "../../img";
 
 const Slider = () => {
   const controls = useAnimation();
   const sliderArray = [
     {
       background: images.creatorbackground1,
-      user: images.user1
+      user: images.user1,
     },
     {
       background: images.creatorbackground2,
-      user: images.user2
+      user: images.user2,
     },
     {
       background: images.creatorbackground3,
-      user: images.user3
+      user: images.user3,
     },
     {
       background: images.creatorbackground4,
-      user: images.user4
+      user: images.user4,
     },
     {
       background: images.creatorbackground5,
-      user: images.user5
+      user: images.user5,
     },
     {
       background: images.creatorbackground6,
-      user: images.user6
-    }
+      user: images.user6,
+    },
   ];
   const [width, setWidth] = useState(0);
   const dragSlider = useRef<HTMLInputElement | null>(null);
-  useEffect(()=>{
-    if(dragSlider.current){
+  useEffect(() => {
+    if (dragSlider.current) {
       setWidth(dragSlider.current.scrollWidth - dragSlider.current.offsetWidth);
     }
-  },[])
+  }, []);
   const handleScroll = (direction: string) => {
     const { current } = dragSlider;
     const scrollAmount = window.innerWidth > 1800 ? 270 : 210;
     if (current) {
       const currentScrollLeft = current.scrollLeft;
-      const newScrollLeft = direction === 'left' ? (currentScrollLeft < scrollAmount ? 0: currentScrollLeft - scrollAmount) : currentScrollLeft + scrollAmount;
-      current.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
-      controls.start({ x: -newScrollLeft, transition: { type: 'tween', ease: 'easeInOut', duration: 0.8 } });
+      const newScrollLeft =
+        direction === "left"
+          ? currentScrollLeft < scrollAmount
+            ? 0
+            : currentScrollLeft - scrollAmount
+          : currentScrollLeft + scrollAmount;
+      current.scrollTo({ left: newScrollLeft, behavior: "smooth" });
+      controls.start({
+        x: -newScrollLeft,
+        transition: { type: "tween", ease: "easeInOut", duration: 0.8 },
+      });
     }
   };
   return (
@@ -59,26 +67,36 @@ const Slider = () => {
         <div className={Style.slider_box_button}>
           <p>Click on play icon & enjoy NFTs Video</p>
           <div className={Style.slider_box_button_btn}>
-            <div className={Style.slider_box_button_btn_icon} onClick={()=>handleScroll("left")}>
-            <TiArrowLeftThick/>
+            <div
+              className={Style.slider_box_button_btn_icon}
+              onClick={() => handleScroll("left")}
+            >
+              <TiArrowLeftThick />
             </div>
-            <div className={Style.slider_box_button_btn_icon} onClick={()=>handleScroll("right")}>
-            <TiArrowRightThick/>
+            <div
+              className={Style.slider_box_button_btn_icon}
+              onClick={() => handleScroll("right")}
+            >
+              <TiArrowRightThick />
             </div>
-            
           </div>
         </div>
         <motion.div className={Style.slider_box_items} ref={dragSlider}>
-          <motion.div ref={dragSlider} className={Style.slider_box_item}
-          drag="x" dragConstraints={{right:0, left: -width}} animate={controls}>
-            {sliderArray.map((element, index)=>(
-              <SliderCard key={index+1} element={element} index={index}/>
+          <motion.div
+            ref={dragSlider}
+            className={Style.slider_box_item}
+            drag="x"
+            dragConstraints={{ right: 0, left: -width }}
+            animate={controls}
+          >
+            {sliderArray.map((element, index) => (
+              <SliderCard key={index + 1} element={element} index={index} />
             ))}
           </motion.div>
         </motion.div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Slider
+export default Slider;
