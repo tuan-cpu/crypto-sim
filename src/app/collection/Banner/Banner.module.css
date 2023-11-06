@@ -2,11 +2,17 @@
     display: none;
 }
 
-@media screen and (max-width: 35em) {
+@media screen and (max-width: 320px) {
     .banner_img_mobile{
         display: block;
     }
     .banner_img{
         display: none;
+    }
+}
+
+@media screen and (min-device-width: 375px) and (max-device-width: 768px) {
+    .banner_img{
+        width: 100%;
     }
 }

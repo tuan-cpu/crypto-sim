@@ -12,7 +12,7 @@ const Banner: React.FC<Props> = ({ bannerImage }) => {
     <div className={Style.banner}>
       <div className={Style.banner_img}>
         <Image
-          style={{ objectFit: "cover", height: 300, width: 1600 }}
+          style={{ objectFit: "cover", height: 300, width: 2600 }}
           src={bannerImage}
           alt="banner-img"
         />
