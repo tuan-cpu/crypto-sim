@@ -2,12 +2,17 @@
 import React from 'react';
 
 //INTERNAL IMPORT
-import Style from './NFTDetails.module.css';
+import { Button, Category, Brand } from '@/components';
+import NFTDetailsPage from './NFTDetailsPage';
 
 
 const NFTDetails = () => {
   return (
-    <div className={Style.nftDetails}>NFTDetails</div>
+    <div>
+      <NFTDetailsPage/>
+      <Category/>
+      <Brand/>
+    </div>
   )
 }
 
