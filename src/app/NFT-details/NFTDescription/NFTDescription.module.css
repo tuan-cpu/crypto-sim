@@ -223,4 +223,7 @@
     .nftDescription_box_profile_bidding_button{
         justify-content: flex-start;
     }
+    .nftDescription_box_share_box_social{
+        left: 70%;
+    }
 }
