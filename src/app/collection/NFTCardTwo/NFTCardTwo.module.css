@@ -1,10 +1,6 @@
 .nftCardTwo{
-    /* width: 80%;
+    /* width: 80%; */
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 3rem;
-    padding-bottom: 10rem; */
 }
 .nftCardTwo_box{
     display: grid;
@@ -87,9 +83,18 @@
     position: relative;
     bottom: -5px;
 }
+.nftCardTwo_box_price_box p{
+    font-size: 1rem;
+}
 .nftCardTwo_box_price_stock{
     display: flex;
     align-items: center;
     gap: .5rem;
     font-size: 1.1rem;
+}
+
+@media screen and (min-width-screen: 320px) and (max-width-screen: 375px) {
+    .nftCardTwo{
+        width: 80%;
+    }
 }
