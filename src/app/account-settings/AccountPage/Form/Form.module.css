@@ -53,6 +53,7 @@
     background-color: transparent;
     border-radius: 1rem;
     padding: 1rem;
+    border: 1px solid var(--icons-color);
 }
 .form_box_social{
     display: grid;

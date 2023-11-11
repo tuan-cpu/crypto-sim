@@ -35,6 +35,10 @@ const Discover = () => {
       name: "Blog",
       link: "blog",
     },
+    {
+      name: "Upload NFT",
+      link: "upload-nft"
+    }
   ];
   return (
     <div>
