@@ -27,7 +27,7 @@ const Form = () => {
             />
           </div>
           <div className={Style.form_box_input}>
-            <label htmlFor="username">Username</label>
+            <label htmlFor="email">Email</label>
             <div className={Style.form_box_input_box}>
               <div className={Style.form_box_input_box_icon}>
                 <HiOutlineMail />
