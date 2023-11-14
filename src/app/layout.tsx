@@ -4,6 +4,7 @@ import './globals.css'
 
 //INTERNAL IMPORT
 import { Footer, Navbar } from '@/components'
+import { ConnectWalletContextProvider } from '@/context/ConnectWalletContext'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,25 +16,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <ConnectWalletContextProvider>
         <Navbar/>
         {children}
         <Footer/>
+        </ConnectWalletContextProvider>
       </body>
     </html>
   )
 }
-
-
-
-
-// declare global {
-//   interface Window {
-//     ethereum: {
-//       on: any;
-//       request: (request: {
-//         method: string;
-//         params?: Array<any>;
-//       }) => Promise<any>;
-//     };
-//   }
-// }

@@ -16,12 +16,14 @@ import {
 import Style from "./Sidebar.module.css";
 import images from '../../../img';
 import { Button } from "@/components";
+import { useConnectWalletContext } from "@/context/ConnectWalletContext";
 
 interface SidebarProps {
   setOpenSideBar: any;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ setOpenSideBar }) => {
+  const { connectWalletPressed } = useConnectWalletContext();
   //-------USESTATE
   const [openDiscover, setOpenDiscover] = useState(false);
   const [openHelp, setOpenHelp] = useState(false);
@@ -150,8 +152,8 @@ const Sidebar: React.FC<SidebarProps> = ({ setOpenSideBar }) => {
         </div>
       </div>
       <div className={Style.sideBar_button}>
-        <Button btnText="Create" handleClick={()=>{}}/>
-        <Button btnText="Connect Wallet" handleClick={()=>{}}/>
+        <Button btnText="Create" handleClick={()=>{}} icon={undefined} classStyle={undefined}/>
+        <Button btnText="Connect Wallet" handleClick={connectWalletPressed} icon={undefined} classStyle={undefined}/>
       </div>
     </div>
   );
