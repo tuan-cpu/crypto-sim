@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { ethers } from 'ethers';
+import axios from 'axios';
+import { create as ipfsHttpClient } from 'ipfs-http-client';
+import Web3Modal from 'web3modal';
+
 
 //Internal import
 import contract_FCS from '../../artifacts/contracts/NFT.sol/TheFunixCryptoSim.json';
@@ -22,6 +26,7 @@ const signer = new ethers.Wallet(PRIVATE_KEY, alchemyProvider);
 const nftContract = new ethers.Contract(FCS_CONTRACT_ADDRESS, contract_FCS.abi, signer);
 const auctionContract = new ethers.Contract(AUCTION_CONTRACT_ADDRESS, contract_auction.abi, signer);
 
+
 // Define the type for your context
 type NFTContextType = {
 };
@@ -35,7 +40,6 @@ type NFTContextProviderProps = {
 };
 
 const NFTContextProvider: React.FC<NFTContextProviderProps> = ({ children }) => {
-
   return (
     <NFTContext.Provider value={{  }}>
       {children}
