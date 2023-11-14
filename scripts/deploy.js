@@ -3,7 +3,10 @@ const { ethers } = require("hardhat");
 async function main(){
     const NFT = await ethers.getContractFactory("TheFunixCryptoSim");
     const nft = await NFT.deploy(process.env.BASE_URI);
-    console.log("Contract deployed to address:", nft.address);
+    const Auction = await ethers.getContractFactory("NFTAuction");
+    const auction = await Auction.deploy(nft.address);
+    console.log("NFT contract deployed at: ", nft.address);
+    console.log("Auction contract deployed at: ", auction.address);
 }
 main()
   .then(() => process.exit(0))

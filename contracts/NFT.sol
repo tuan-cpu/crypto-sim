@@ -276,10 +276,10 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, Crypto
             sireId: sire
         });
         sims.push(newSim);
-        _safeMint(owner,supply);
+        _safeMint(simOwner,supply);
         _setTokenURI(supply,_newURI);
         emit Birth(
-            owner,
+            simOwner,
             supply,
             newSim.matronId,
             newSim.sireId,
@@ -344,6 +344,7 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, Crypto
         returns (uint256)
     {
         // require(msg.value == 0.05 ether);
+        require(ownerOf(matronId) == msg.sender && ownerOf(sireId) == msg.sender, "Not your sim!");
         return createSim(matronId, sireId, msg.sender);
     }
     function ownedSims() external view returns (uint256[] memory) {
