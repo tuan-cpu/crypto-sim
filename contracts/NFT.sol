@@ -404,6 +404,7 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, Crypto
 
     // NFT Marketplace functions
     struct Listing {
+        uint256 tokenId;
         address payable  seller;
         uint256 price;
         address payable escrow;
@@ -436,6 +437,7 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, Crypto
         require(msg.value == listingPrice + price, "Must pay enough for listing");
         require(_ownerOf(tokenId) == msg.sender, "Not your token");
         Listing memory _newListing = Listing(
+            tokenId,
             payable(msg.sender),
             price,
             payable(address(this)), // Contract as escrow
