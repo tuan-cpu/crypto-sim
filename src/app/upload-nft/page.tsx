@@ -1,11 +1,14 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 //INTERNAL IMPORT
 import Style from "./page.module.css";
 import UploadNFT from "./UploadNFT";
+//IMPORT SMART CONTRACT
+import { useNFTContext } from "@/context/NFTContext";
 
 const page = () => {
+  const { createNFT } = useNFTContext();
   return (
     <div className={Style.uploadNFT}>
       <div className={Style.uploadNFT_box}>
@@ -24,7 +27,7 @@ const page = () => {
           </p>
         </div>
         <div className={Style.uploadNFT_box_form}>
-          <UploadNFT/>
+          <UploadNFT createNFT={createNFT}/>
         </div>
       </div>
     </div>

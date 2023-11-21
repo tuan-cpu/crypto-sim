@@ -17,6 +17,9 @@ import Sidebar from "./Sidebar";
 import images from "../../img";
 import { Button } from "..";
 
+//IMPORT FROM SMART CONTRACT
+import { useConnectWalletContext } from "@/context/ConnectWalletContext";
+
 const Navbar = () => {
   //--USESTATE COMPONENTS
   const [discover, setDiscover] = useState(false);
@@ -66,6 +69,9 @@ const Navbar = () => {
   const openSidebar = () => {
     setOpenSideBar(!openSideBar);
   };
+
+  //SMART CONTRACT SECTION
+  const { wallet, connectWalletPressed } = useConnectWalletContext();
 
   return (
     <div className={Style.navbar}>
@@ -117,7 +123,23 @@ const Navbar = () => {
           </div>
           {/* CREATE BUTTON SECTION */}
           <div className={Style.navbar_container_right_button}>
-            <Button btnText="Create" handleClick={()=>{}} />
+            {wallet == "" ? (
+              <Button
+                btnText="Connect"
+                handleClick={() => connectWalletPressed()}
+                icon={undefined}
+                classStyle={undefined}
+              />
+            ) : (
+              <Link href={{ pathname: "/upload-nft" }}>
+                <Button
+                  btnText="Create"
+                  handleClick={() => {}}
+                  icon={undefined}
+                  classStyle={undefined}
+                />
+              </Link>
+            )}
           </div>
           {/* USER PROFILE */}
           <div className={Style.navbar_container_right_profile}>
@@ -127,7 +149,7 @@ const Navbar = () => {
                 alt="Profile"
                 width={40}
                 height={40}
-                style={{borderRadius:20}}
+                style={{ borderRadius: 20 }}
                 onClick={() => openProfile()}
               />
               {profile && <Profile />}
@@ -143,7 +165,7 @@ const Navbar = () => {
           {/* SIDEBAR COMPONENT */}
           {openSideBar && (
             <div className={Style.sideBar}>
-              <Sidebar setOpenSideBar={setOpenSideBar} />
+              <Sidebar setOpenSideBar={setOpenSideBar} wallet={wallet} connectWallet={connectWalletPressed} />
             </div>
           )}
         </div>

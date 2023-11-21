@@ -18,8 +18,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ConnectWalletContextProvider>
-          <Navbar />
-          <NFTContextProvider>{children}</NFTContextProvider>
+          <NFTContextProvider>
+            <Navbar />
+            {children}
+          </NFTContextProvider>
           <Footer />
         </ConnectWalletContextProvider>
       </body>

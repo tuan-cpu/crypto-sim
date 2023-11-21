@@ -17,7 +17,7 @@ interface Props {
   fileSize: string;
   category: string;
   properties: string;
-  image: any;
+  setImage: any;
 }
 
 const DropZone: React.FC<Props> = ({
@@ -31,18 +31,21 @@ const DropZone: React.FC<Props> = ({
   fileSize,
   category,
   properties,
-  image,
+  setImage,
 }) => {
-  const [fileUrl, setFileUrl] = useState(null);
   const onDrop = useCallback(
-    async (acceptedFile: any) => setFileUrl(acceptedFile[0]),
+    async (acceptedFile: any) =>{
+      setFileUrl(URL.createObjectURL(acceptedFile[0]));
+      setImage(acceptedFile[0]);
+    },
     []
   );
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: onDrop,
-    accept: { key1: ["image/*"] },
+    // accept: { "*": ["image/*"]},
     maxSize: 5000000,
   });
+  const [fileUrl, setFileUrl] = useState("");
   return (
     <div className={Style.dropZone}>
       <div className={Style.dropZone_box} {...getRootProps()}>
@@ -50,24 +53,35 @@ const DropZone: React.FC<Props> = ({
         <div className={Style.dropZone_box_input}>
           <p>{title}</p>
           <div className={Style.dropZone_box_input_img}>
-            <Image
-              src={image}
-              alt="upload"
-              width={100}
-              height={100}
-              style={{ objectFit: "contain" }}
-              className={Style.dropZone_box_input_img_img}
-            />
+            {fileUrl != "" ? (
+              <Image
+                src={fileUrl}
+                alt="upload"
+                width={100}
+                height={100}
+                style={{ objectFit: "contain" }}
+                className={Style.dropZone_box_input_img_img}
+              />
+            ) : (
+              <Image
+                src={images.upload}
+                alt="upload"
+                width={100}
+                height={100}
+                style={{ objectFit: "contain" }}
+                className={Style.dropZone_box_input_img_img}
+              />
+            )}
           </div>
           <p>{heading}</p>
           <p>{subHeading}</p>
         </div>
       </div>
-      {fileUrl && (
+      {fileUrl != "" && (
         <aside className={Style.dropZone_box_aside}>
           <div className={Style.dropZone_box_aside_box}>
             <Image
-              src={images.nft_image_1}
+              src={fileUrl}
               alt="nft-image"
               width={200}
               height={200}

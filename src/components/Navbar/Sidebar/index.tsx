@@ -9,21 +9,21 @@ import {
   TiSocialYoutube,
   TiSocialInstagram,
   TiArrowSortedDown,
-  TiArrowSortedUp
+  TiArrowSortedUp,
 } from "react-icons/ti";
 
 //INTERNAL IMPORT
 import Style from "./Sidebar.module.css";
-import images from '../../../img';
+import images from "../../../img";
 import { Button } from "@/components";
-import { useConnectWalletContext } from "@/context/ConnectWalletContext";
 
 interface SidebarProps {
   setOpenSideBar: any;
+  wallet: string;
+  connectWallet: any;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ setOpenSideBar }) => {
-  const { connectWalletPressed } = useConnectWalletContext();
+const Sidebar: React.FC<SidebarProps> = ({ setOpenSideBar, wallet, connectWallet }) => {
   //-------USESTATE
   const [openDiscover, setOpenDiscover] = useState(false);
   const [openHelp, setOpenHelp] = useState(false);
@@ -84,67 +84,84 @@ const Sidebar: React.FC<SidebarProps> = ({ setOpenSideBar }) => {
 
   const closeSideBar = () => {
     setOpenSideBar(false);
-  }
+  };
   const openDiscoverMenu = () => {
     setOpenDiscover(!openDiscover);
-  }
+  };
   const openHelpMenu = () => {
     setOpenHelp(!openHelp);
-  }
+  };
   return (
     <div className={Style.sideBar}>
-      
       <div className={Style.sideBar_box}>
         <div className={Style.sideBar_header}>
-          <Image src={images.logo} alt="logo" width={150} height={150} style={{padding:1}}/>
-          <GrClose className={Style.sideBar_closeBtn} onClick={()=>closeSideBar()}/>
+          <Image
+            src={images.logo}
+            alt="logo"
+            width={150}
+            height={150}
+            style={{ padding: 1 }}
+          />
+          <GrClose
+            className={Style.sideBar_closeBtn}
+            onClick={() => closeSideBar()}
+          />
         </div>
-        
-        <p>Discover the most outstanding articles on all topics of NFT & your own stories and share them</p>
+
+        <p>
+          Discover the most outstanding articles on all topics of NFT & your own
+          stories and share them
+        </p>
         <div className={Style.sideBar_social}>
-          <Link href={{pathname: "#"}}>
-            <TiSocialFacebook/>
+          <Link href={{ pathname: "#" }}>
+            <TiSocialFacebook />
           </Link>
-          <Link href={{pathname: "#"}}>
-            <TiSocialInstagram/>
+          <Link href={{ pathname: "#" }}>
+            <TiSocialInstagram />
           </Link>
-          <Link href={{pathname: "#"}}>
-            <TiSocialLinkedin/>
+          <Link href={{ pathname: "#" }}>
+            <TiSocialLinkedin />
           </Link>
-          <Link href={{pathname: "#"}}>
-            <TiSocialYoutube/>
+          <Link href={{ pathname: "#" }}>
+            <TiSocialYoutube />
           </Link>
-          <Link href={{pathname: "#"}}>
-            <TiSocialTwitter/>
+          <Link href={{ pathname: "#" }}>
+            <TiSocialTwitter />
           </Link>
         </div>
       </div>
       <div className={Style.sideBar_menu}>
         <div>
-          <div className={Style.sideBar_menu_box} onClick={()=> openDiscoverMenu()}>
+          <div
+            className={Style.sideBar_menu_box}
+            onClick={() => openDiscoverMenu()}
+          >
             <p>Discover</p>
-            <TiArrowSortedDown/>
+            <TiArrowSortedDown />
           </div>
           {openDiscover && (
             <div className={Style.sideBar_discover}>
-              {discover.map((element, index)=>(
-                <div key={index+1}>
-                  <Link href={{pathname: element.link}}>{element.name}</Link>
+              {discover.map((element, index) => (
+                <div key={index + 1}>
+                  <Link href={{ pathname: element.link }}>{element.name}</Link>
                 </div>
               ))}
             </div>
           )}
         </div>
         <div>
-          <div className={Style.sideBar_menu_box} onClick={()=> openHelpMenu()}>
+          <div
+            className={Style.sideBar_menu_box}
+            onClick={() => openHelpMenu()}
+          >
             <p>Help Center</p>
-            <TiArrowSortedDown/>
+            <TiArrowSortedDown />
           </div>
           {openHelp && (
             <div className={Style.sideBar_discover}>
-              {helpCenter.map((element, index)=>(
-                <div key={index+1}>
-                  <Link href={{pathname: element.link}}>{element.name}</Link>
+              {helpCenter.map((element, index) => (
+                <div key={index + 1}>
+                  <Link href={{ pathname: element.link }}>{element.name}</Link>
                 </div>
               ))}
             </div>
@@ -152,8 +169,23 @@ const Sidebar: React.FC<SidebarProps> = ({ setOpenSideBar }) => {
         </div>
       </div>
       <div className={Style.sideBar_button}>
-        <Button btnText="Create" handleClick={()=>{}} icon={undefined} classStyle={undefined}/>
-        <Button btnText="Connect Wallet" handleClick={connectWalletPressed} icon={undefined} classStyle={undefined}/>
+        {wallet != "" ? (
+          <Link href={{ pathname: "/upload-nft" }}>
+            <Button
+              btnText="Create"
+              handleClick={() => {}}
+              icon={undefined}
+              classStyle={undefined}
+            />
+          </Link>
+        ) : (
+          <Button
+            btnText="Connect Wallet"
+            handleClick={connectWallet}
+            icon={undefined}
+            classStyle={undefined}
+          />
+        )}
       </div>
     </div>
   );

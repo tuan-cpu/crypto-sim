@@ -12,15 +12,21 @@ import images from "../../../img";
 import { Button } from "@/components";
 import DropZone from "./DropZone";
 
-const UploadNFT = () => {
+interface Props{
+  createNFT: any;
+}
+
+const UploadNFT:React.FC<Props> = ({createNFT}) => {
+  const [price, setPrice] = useState("");
   const [active, setActive] = useState(0);
-  const [itemName, setItemName] = useState("");
+  const [name, setName] = useState("");
   const [website, setWebsite] = useState("");
   const [description, setDescription] = useState("");
   const [royalties, setRoyalties] = useState("");
   const [fileSize, setFileSize] = useState("");
   const [category, setCategory] = useState("");
   const [properties, setProperties] = useState("");
+  const [image, setImage] = useState(null);
   const categoryArray = [
     {
       image: images.nft_image_1,
@@ -53,22 +59,22 @@ const UploadNFT = () => {
         title="JPG, PNG, WEBM, MAX 100MB"
         heading="Drag & Drop file"
         subHeading="or Browse media on your device"
-        itemName={itemName}
+        itemName={name}
         website={website}
         description={description}
         royalties={royalties}
         fileSize={fileSize}
         category={category}
         properties={properties}
-        image={images.upload}
+        setImage={setImage}
       />
       <div className={Style.upload_box}>
         <div className={formStyle.form_box_input}>
           <label htmlFor="nft">Item Name</label>
           <input
             type="text"
-            placeholder="Your username"
-            onChange={(e) => setItemName(e.target.value)}
+            placeholder="NFT name"
+            onChange={(e) => setName(e.target.value)}
             className={formStyle.form_box_input_username}
           />
         </div>
@@ -181,12 +187,37 @@ const UploadNFT = () => {
               />
             </div>
           </div>
+          <div className={formStyle.form_box_input}>
+            <label htmlFor="price">Price</label>
+            <div className={formStyle.form_box_input_box}>
+              <div className={formStyle.form_box_input_box_icon}>
+                <AiTwotonePropertySafety />
+              </div>
+              <input
+                type="text"
+                placeholder="Price"
+                onChange={(e) => setPrice(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
         <div className={Style.upload_box_btn}>
           <Button
             btnText="Upload"
             classStyle={Style.upload_box_btn_style}
-            handleClick={() => {}}
+            handleClick={async() => {
+              const formInput = {
+                name: name,
+                description: description,
+                price: price,
+                website: website || "", 
+                collection: category, 
+                royalties: royalties, 
+                size: fileSize, 
+                properties: properties
+              }
+              createNFT(formInput, image);
+            }}
             icon={undefined}
           />
           <Button

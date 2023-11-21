@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 import { ethers } from "ethers";
 import axios from "axios";
 import FormData from "form-data";
-import Web3Modal from "web3modal";
 
 //Internal import
 import contract_FCS from "../../artifacts/contracts/NFT.sol/TheFunixCryptoSim.json";
@@ -34,7 +33,25 @@ const auctionContract = new ethers.Contract(
 );
 
 // Define the type for your context
-type NFTContextType = {};
+type NFTContextType = {
+  createNFT: any;
+  buySim: any;
+  breedSim: any;
+  ownedSim: any;
+  ownerOf: any;
+  getListingPrice: any;
+  listNFT: any;
+  cancelListNFT: any;
+  reListNFT: any;
+  buyNFT: any;
+  fetchMarketItem: any;
+  fetchListedItem: any;
+  createAuction: any;
+  bid: any;
+  settleAuction: any;
+  getHighestBidderOfAnAuction: any;
+  fetchNFTImageFromIPFS: any;
+};
 
 // Create a context with an initial state
 const NFTContext = createContext<NFTContextType | undefined>(undefined);
@@ -51,7 +68,7 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     const formData = new FormData();
     formData.append("file", file);
     const pinataMetadata = JSON.stringify({
-      name: `${constant.IMAGE_BASE_URI}/${file.name}`,
+      name: `CryptoSims/${file.name}`,
     });
     formData.append("pinataMetadata", pinataMetadata);
     const pinataOptions = JSON.stringify({
@@ -70,7 +87,7 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
           },
         }
       );
-      return res.data;
+      return res.data.IpfsHash;
     } catch (error) {
       console.log(error);
     }
@@ -78,19 +95,31 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
   const pinJSONToIPFS = async (
     imageURI: string,
     name: string,
-    description: string
+    description: string,
+    website: string,
+    collection: string,
+    royalties: string,
+    size: string,
+    properties: string
   ) => {
+    const metadataFileName = `${name}.json`; // Include the .json extension
+  
     const data = JSON.stringify({
       pinataContent: {
         name: name,
         description: description,
-        image: imageURI,
+        image: `ipfs://${imageURI}`,
+        website: website || "",
+        collection: collection,
+        royalties: royalties,
+        size: size + "MB",
+        properties: properties,
       },
       pinataMetadata: {
-        name: `${constant.BASE_URI}/${name}.json`,
+        name: `CryptoSimsMeta/${metadataFileName}`, // Use the metadata file name
       },
     });
-
+  
     try {
       const res = await axios.post(
         "https://api.pinata.cloud/pinning/pinJSONToIPFS",
@@ -98,27 +127,36 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: constant.PINATA_JWT,
+            Authorization: `Bearer ${constant.PINATA_JWT}`, // Adjust the prefix if needed
           },
         }
       );
-      return res.data;
+      return res.data.IpfsHash;
     } catch (error) {
       console.log(error);
     }
   };
+  
 
   const createNFT = async (
-    formInput: { name: string; description: string; price: string },
-    router: any,
+    formInput: {
+      name: string;
+      description: string;
+      price: string;
+      website: string;
+      collection: string;
+      royalties: string;
+      size: string;
+      properties: string;
+    },
     file: File
   ) => {
     try {
-      const { name, description, price } = formInput;
-      if (!name || !description || !price || !file)
+      const { name, description, price, website, collection, royalties, size, properties } = formInput;
+      if (!name || !description || !price || !file || !collection || !royalties || !size || !properties)
         return console.log("Missing data for creating NFT");
       const imageURI = await pinFileToIPFS(file);
-      const tokenURI = await pinJSONToIPFS(imageURI, name, description);
+      const tokenURI = await pinJSONToIPFS(imageURI, name, description, website, collection, royalties, size, properties);
       console.log(tokenURI);
     } catch (error) {
       console.log("Error while creating NFT!");
@@ -168,43 +206,72 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     const data = await nftContract.fetchMarketItem();
     const items = await Promise.all(
       data.map(
-        async(item:{tokenId: number, seller: string, price: string, escrow: string, sold: boolean}) =>{
+        async (item: {
+          tokenId: number;
+          seller: string;
+          price: string;
+          escrow: string;
+          sold: boolean;
+        }) => {
           const tokenId = item.tokenId;
           const seller = item.seller;
           const escrow = item.escrow;
           const tokenURI = await nftContract.tokenURI(tokenId);
           const {
-            data: { image, name, description }
+            data: { image, name, description },
           } = await axios.get(tokenURI);
           const ethPrice = weiToEth(item.price);
           return {
-            ethPrice, tokenId, seller, escrow, name, description, image, tokenURI
-          }
+            ethPrice,
+            tokenId,
+            seller,
+            escrow,
+            name,
+            description,
+            image,
+            tokenURI,
+          };
         }
       )
-    )
+    );
     return items;
   };
   const fetchListedItem = async (type: string) => {
     try {
-      const data = type == "fetchListedItems" ? await nftContract.fetchListedItem() : await ownedSim();
+      const data =
+        type == "fetchListedItems"
+          ? await nftContract.fetchListedItem()
+          : await ownedSim();
       const items = await Promise.all(
         data.map(
-          async(item:{tokenId: number, seller: string, price: string, escrow: string, sold: boolean}) =>{
+          async (item: {
+            tokenId: number;
+            seller: string;
+            price: string;
+            escrow: string;
+            sold: boolean;
+          }) => {
             const tokenId = item.tokenId;
             const seller = item.seller;
             const escrow = item.escrow;
             const tokenURI = await nftContract.tokenURI(tokenId);
             const {
-              data: { image, name, description }
+              data: { image, name, description },
             } = await axios.get(tokenURI);
             const ethPrice = weiToEth(item.price);
             return {
-              ethPrice, tokenId, seller, escrow, name, description, image, tokenURI
-            }
+              ethPrice,
+              tokenId,
+              seller,
+              escrow,
+              name,
+              description,
+              image,
+              tokenURI,
+            };
           }
         )
-      )
+      );
       return items;
     } catch (error) {
       console.log("Error while fetching listed NFTs!");
@@ -239,7 +306,7 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
   };
   const weiToEth = (price: string) => {
     return ethers.utils.formatEther(Number(BigInt(price)));
-  }
+  };
   const extractCIDandImage = (uri: string) => {
     const result = uri.split("/");
     return [result[2], result[3]];
@@ -247,21 +314,38 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
   const constructGateway = (cid: string, image: string) => {
     return "https://gateway.pinata.cloud/ipfs/" + cid + "/" + image;
   };
-  const fetchNFTImageFromIPFS = async(tokenId: number) => {
+  const fetchNFTImageFromIPFS = async (tokenId: number) => {
     const uri = await nftContract.tokenURI(tokenId);
     const response = await fetch(uri);
     const metadata = await response.json();
     const [cid, image] = extractCIDandImage(metadata.image);
     return constructGateway(cid, image);
-  }
+  };
 
   return (
-    <NFTContext.Provider value={{ 
-      createNFT, buySim, breedSim, ownedSim, ownerOf,
-      getListingPrice, listNFT, cancelListNFT, reListNFT, buyNFT, fetchMarketItem, fetchListedItem,
-      createAuction, bid, settleAuction, getHighestBidderOfAnAuction,
-      fetchNFTImageFromIPFS
-    }}>{children}</NFTContext.Provider>
+    <NFTContext.Provider
+      value={{
+        createNFT,
+        buySim,
+        breedSim,
+        ownedSim,
+        ownerOf,
+        getListingPrice,
+        listNFT,
+        cancelListNFT,
+        reListNFT,
+        buyNFT,
+        fetchMarketItem,
+        fetchListedItem,
+        createAuction,
+        bid,
+        settleAuction,
+        getHighestBidderOfAnAuction,
+        fetchNFTImageFromIPFS,
+      }}
+    >
+      {children}
+    </NFTContext.Provider>
   );
 };
 
