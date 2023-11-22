@@ -10,12 +10,6 @@ import {
 import { BsThreeDots } from "react-icons/bs";
 import { FaWallet, FaPercentage } from "react-icons/fa";
 import { BiTransferAlt, BiDollar } from "react-icons/bi";
-
-//INTERNAL IMPORT
-import Style from "./NFTDescription.module.css";
-import images from "../../../img";
-import { Button } from "@/components";
-import { NFTTabs } from "..";
 import Link from "next/link";
 import {
   TiSocialFacebook,
@@ -25,11 +19,23 @@ import {
   TiSocialYoutube,
 } from "react-icons/ti";
 
-interface Props{
-  nft: any
+//INTERNAL IMPORT
+import Style from "./NFTDescription.module.css";
+import images from "../../../img";
+import { Button } from "@/components";
+import { NFTTabs } from "..";
+
+//SMART CONTRACT IMPORT
+import { useNFTContext } from "@/context/NFTContext";
+import { useConnectWalletContext } from "@/context/ConnectWalletContext";
+
+interface Props {
+  nft: any;
 }
 
-const NFTDescription:React.FC<Props> = ({nft}) => {
+const NFTDescription: React.FC<Props> = ({ nft }) => {
+  const { buyNFT } = useNFTContext();
+  const { wallet } = useConnectWalletContext();
   const [social, setSocial] = useState(false);
   const [NFTMenu, setNFTMenu] = useState(false);
   const [history, setHistory] = useState(true);
@@ -55,15 +61,15 @@ const NFTDescription:React.FC<Props> = ({nft}) => {
   const openTabs = (e: any) => {
     const inputText = e.target as HTMLElement;
     const btnText = inputText.innerText;
-    if(btnText == "Bid History"){
+    if (btnText == "Bid History") {
       setHistory(true);
       setProvenance(false);
       setOwner(false);
-    }else if(btnText == "Provenance"){
+    } else if (btnText == "Provenance") {
       setHistory(false);
       setProvenance(true);
       setOwner(false);
-    }else{
+    } else {
       setHistory(false);
       setProvenance(false);
       setOwner(true);
@@ -122,7 +128,9 @@ const NFTDescription:React.FC<Props> = ({nft}) => {
           </div>
         </div>
         <div className={Style.nftDescription_box_profile}>
-          <h1>{nft?.name} #{nft?.tokenId}</h1>
+          <h1>
+            {nft?.name} #{nft?.tokenId}
+          </h1>
           <div className={Style.nftDescription_box_profile_box}>
             <div className={Style.nftDescription_box_profile_box_left}>
               <Image
@@ -135,9 +143,16 @@ const NFTDescription:React.FC<Props> = ({nft}) => {
               <div className={Style.nftDescription_box_profile_box_left_info}>
                 <small>Creator</small>
                 <br />
-                <span>
-                  Lê Tuấn <MdVerified />
-                </span>
+                <Link
+                  href={{
+                    pathname: "/author-profile",
+                    query: `${nft?.seller}`,
+                  }}
+                >
+                  <span>
+                    Lê Tuấn <MdVerified />
+                  </span>
+                </Link>
               </div>
             </div>
             <div className={Style.nftDescription_box_profile_box_right}>
@@ -161,7 +176,7 @@ const NFTDescription:React.FC<Props> = ({nft}) => {
         <div className={Style.nftDescription_box_profile}>
           <div className={Style.nftDescription_box_profile_bidding}>
             <p>
-              <MdTimer/> <span>Auction ending in:</span>
+              <MdTimer /> <span>Auction ending in:</span>
             </p>
             <div className={Style.nftDescription_box_profile_bidding_timers}>
               <div
@@ -201,12 +216,27 @@ const NFTDescription:React.FC<Props> = ({nft}) => {
               <span>[96 in stock]</span>
             </div>
             <div className={Style.nftDescription_box_profile_bidding_button}>
-              <Button
-                btnText="Place A Bid"
-                handleClick={() => {}}
-                icon={<FaWallet />}
-                classStyle={Style.button}
-              />
+              {wallet == nft?.seller.toLowerCase() ? (
+                <p>You cannot buy your own NFT</p>
+              ) : wallet == nft?.escrow.toLowerCase() ? (
+                <div
+                  className={Style.nftDescription_box_profile_bidding_button}
+                >
+                  <Button
+                    btnText="List on Marketplace"
+                    handleClick={() => {}}
+                    icon={<FaWallet />}
+                    classStyle={Style.button}
+                  />
+                </div>
+              ) : (
+                <Button
+                  btnText="Buy NFT"
+                  handleClick={() => buyNFT()}
+                  icon={<FaPercentage />}
+                  classStyle={Style.button}
+                />
+              )}
               <Button
                 btnText="Make offer"
                 handleClick={() => {}}
@@ -223,21 +253,21 @@ const NFTDescription:React.FC<Props> = ({nft}) => {
               <div
                 className={Style.nftDescription_box_profile_bidding_box_card}
               >
-                <NFTTabs dataTab={historyArray} icon={undefined}/>
+                <NFTTabs dataTab={historyArray} icon={undefined} />
               </div>
             )}
             {provenance && (
               <div
                 className={Style.nftDescription_box_profile_bidding_box_card}
               >
-                <NFTTabs dataTab={provenanceArray} icon={undefined}/>
+                <NFTTabs dataTab={provenanceArray} icon={undefined} />
               </div>
             )}
             {owner && (
               <div
                 className={Style.nftDescription_box_profile_bidding_box_card}
               >
-                <NFTTabs dataTab={ownerArray} icon={<MdVerified/>}/>
+                <NFTTabs dataTab={ownerArray} icon={<MdVerified />} />
               </div>
             )}
           </div>
