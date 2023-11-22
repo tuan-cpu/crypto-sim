@@ -25,7 +25,11 @@ import {
   TiSocialYoutube,
 } from "react-icons/ti";
 
-const NFTDescription = () => {
+interface Props{
+  nft: any
+}
+
+const NFTDescription:React.FC<Props> = ({nft}) => {
   const [social, setSocial] = useState(false);
   const [NFTMenu, setNFTMenu] = useState(false);
   const [history, setHistory] = useState(true);
@@ -118,7 +122,7 @@ const NFTDescription = () => {
           </div>
         </div>
         <div className={Style.nftDescription_box_profile}>
-          <h1>BearX #12345</h1>
+          <h1>{nft?.name} #{nft?.tokenId}</h1>
           <div className={Style.nftDescription_box_profile_box}>
             <div className={Style.nftDescription_box_profile_box_left}>
               <Image
@@ -138,17 +142,17 @@ const NFTDescription = () => {
             </div>
             <div className={Style.nftDescription_box_profile_box_right}>
               <Image
-                src={images.user2}
+                src={images.creatorbackground1}
                 alt="profile"
                 width={40}
                 height={40}
                 className={Style.nftDescription_box_profile_box_left_img}
               />
               <div className={Style.nftDescription_box_profile_box_right_info}>
-                <small>Creator</small>
+                <small>Collection</small>
                 <br />
                 <span>
-                  Lê Tuấn <MdVerified />
+                  Monkey <MdVerified />
                 </span>
               </div>
             </div>
@@ -191,7 +195,7 @@ const NFTDescription = () => {
               >
                 <small>Current Bid</small>
                 <p>
-                  1.000 ETH <span>(≈ $2999.99)</span>
+                  {nft?.price} ETH <span>(≈ $2999.99)</span>
                 </p>
               </div>
               <span>[96 in stock]</span>

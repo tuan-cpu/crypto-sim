@@ -4,12 +4,16 @@ import React from 'react';
 import Style from './NFTDetails.module.css';
 import { NFTDescription, NFTDetailsImg, NFTTabs } from '.';
 
-const NFTDetailsPage = () => {
+interface Props {
+  nft: any;
+}
+
+const NFTDetailsPage:React.FC<Props> = ({nft}) => {
   return (
     <div className={Style.nftDetailsPage}>
         <div className={Style.nftDetailsPage_box}>
-            <NFTDetailsImg/>
-            <NFTDescription/>
+            <NFTDetailsImg nft={nft}/>
+            <NFTDescription nft={nft}/>
         </div>
     </div>
   )

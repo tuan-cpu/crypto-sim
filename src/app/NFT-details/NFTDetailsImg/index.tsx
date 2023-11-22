@@ -8,7 +8,11 @@ import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import Style from "./NFTDetailsImg.module.css";
 import images from "../../../img";
 
-const NFTDetailsImg = () => {
+interface Props {
+  nft: any;
+}
+
+const NFTDetailsImg: React.FC<Props> = ({ nft }) => {
   const [description, setDescription] = useState(true);
   const [details, setDetails] = useState(true);
   const [like, setLike] = useState(false);
@@ -20,7 +24,10 @@ const NFTDetailsImg = () => {
   };
   const openDetails = () => {
     setDetails(!details);
-  }
+  };
+  const getImageSrc = (imageIPFS: string) => {
+    return imageIPFS.substring(7, imageIPFS.length);
+  };
   return (
     <div className={Style.nftDetailsImg}>
       <div className={Style.nftDetailsImg_box}>
@@ -42,6 +49,7 @@ const NFTDetailsImg = () => {
           </div>
           <div className={Style.nftDetailsImg_box_NFT_img}>
             <Image
+              // src={`https://gateway.pinata.cloud/ipfs${getImageSrc(nft.image)}`}
               src={images.nft_image_1}
               className={Style.nftDetailsImg_box_NFT_img_img}
               alt="NFT image"
@@ -61,37 +69,32 @@ const NFTDetailsImg = () => {
         {description && (
           <div className={Style.nftDetailsImg_box_description_box}>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
+              {nft?.description}
             </p>
           </div>
         )}
-        <div className={Style.nftDetailsImg_box_details} onClick={()=>openDetails()}>
+        <div
+          className={Style.nftDetailsImg_box_details}
+          onClick={() => openDetails()}
+        >
           <p>Details</p>
           {details ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
         </div>
-        {
-          details && (
-            <div className={Style.nftDetailsImg_box_details_box}>
+        {details && (
+          <div className={Style.nftDetailsImg_box_details_box}>
             <small>2000 x 2000 px.IMAGE(685kb)</small>
             <p>
               <small>Contract Address</small>
               <br></br>
-              0x1234567890myaddress
+              {nft?.seller}
             </p>
             <p>
               <small>Token ID</small>
               <br></br>
-              123456
+              {nft?.tokenId}
             </p>
           </div>
-          )
-        }
+        )}
       </div>
     </div>
   );

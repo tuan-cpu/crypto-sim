@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { ethers } from "ethers";
 import axios from "axios";
 import FormData from "form-data";
@@ -102,6 +102,8 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     size: string,
     properties: string
   ) => {
+    // let lastIndex = name.lastIndexOf(".");
+    // let newName = name.substring(0,lastIndex);
     const metadataFileName = `${name}.json`; // Include the .json extension
   
     const data = JSON.stringify({
@@ -202,6 +204,8 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     const weiPrice = ethToWei(price);
     return await nftContract.buyNFT(tokenId, { value: weiPrice });
   };
+
+  const [marketItemList, setMarketItemList] = useState([]);
   const fetchMarketItem = async () => {
     const data = await nftContract.fetchMarketItem();
     const items = await Promise.all(
@@ -277,6 +281,10 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
       console.log("Error while fetching listed NFTs!");
     }
   };
+
+  useEffect(()=>{
+    fetchMarketItem();
+  },[])
 
   //AUCTION
   const createAuction = async (
