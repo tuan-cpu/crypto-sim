@@ -63,7 +63,8 @@ const Author = () => {
       const image = await fetchNFTImageFromIPFS(converted_array[i]);
       result.push({
         tokenId: converted_array[i],
-        tokenUri: image,
+        image: image,
+        tokenURI: uri,
         tokenName: metadata.name,
         tokenDescription: metadata.description
       })

@@ -21,10 +21,15 @@ import { Button } from "@/components";
 import Link from "next/link";
 import { BsThreeDots } from "react-icons/bs";
 
+import { useConnectWalletContext } from "@/context/ConnectWalletContext";
+import { useNFTContext } from "@/context/NFTContext";
+
 interface Props {
-  wallet: string,
+  wallet: string;
 }
-const AuthorProfileCard:React.FC<Props> = ({wallet}) => {
+const AuthorProfileCard: React.FC<Props> = ({ wallet }) => {
+  const { wallet: currentWallet } = useConnectWalletContext();
+  const { buySim } = useNFTContext();
   const [share, setShare] = useState(false);
   const [report, setReport] = useState(false);
   const textRef = useRef<HTMLInputElement>(null);
@@ -96,7 +101,21 @@ const AuthorProfileCard:React.FC<Props> = ({wallet}) => {
           </div>
         </div>
         <div className={Style.authorProfileCard_box_share}>
-          <Button btnText="Follow" handleClick={() => { } } icon={undefined} classStyle={undefined} />
+          {currentWallet === wallet ? (
+            <Button
+              btnText="Mint New Sim"
+              handleClick={()=>buySim()}
+              icon={undefined}
+              classStyle={undefined}
+            />
+          ) : (
+            <Button
+              btnText="Follow"
+              handleClick={() => {}}
+              icon={undefined}
+              classStyle={undefined}
+            />
+          )}
           <MdCloudUpload
             onClick={() => openShare()}
             className={Style.authorProfileCard_box_share_icon}

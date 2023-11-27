@@ -2,7 +2,7 @@ import React from 'react';
 
 //INTERNAL IMPORT
 import Style from './NFTDetails.module.css';
-import { NFTDescription, NFTDetailsImg, NFTTabs } from '.';
+import { NFTDescription, NFTDetailsImg } from '.';
 
 interface Props {
   nft: any;

@@ -223,6 +223,28 @@
     }
 
 }
+.nftDescription_box_profile_bidding_pricing{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border: 1px solid var(--icons-color);
+    border-radius: 5rem;
+    margin-top: 3rem;
+}
+.nftDescription_box_profile_bidding_pricing input{
+    font-size: 2rem;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    width: 90%;
+}
+@media screen and (min-device-width:320px) and (max-device-width: 375px){
+    .nftDescription_box_profile_bidding_pricing input{
+        font-size: 1rem;
+    }
+}
 @media screen and (min-device-width:376px) and (max-device-width: 425px){
     .nftDescription_box_profile_bidding_price{
         grid-template-columns: 1fr;

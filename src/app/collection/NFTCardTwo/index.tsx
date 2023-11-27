@@ -39,10 +39,11 @@ const NFTCardTwo: React.FC<Props> = ({ element, index }) => {
         className={Style.nftCardTwo}
         onClick={() =>
           updateSelectedNFT({
-            image: element.tokenUri,
+            image: element.image,
+            tokenURI: element.tokenURI,
             tokenId: element.tokenId,
             name: element.tokenName,
-            seller: element.seller || "",
+            seller: element.seller || "0xE4926a51ba27B417165B0D8288EF248AA20BEE0E",
             escrow:
               element.escrow || "0x2822126c7d88Fd8128Ca79ea7953ac0ec05442E3",
             price: element.price || 0,
@@ -64,7 +65,7 @@ const NFTCardTwo: React.FC<Props> = ({ element, index }) => {
           </div>
           <div className={Style.nftCardTwo_box_img}>
             <Image
-              src={element.tokenUri}
+              src={element.image}
               alt="NFT"
               width={500}
               height={300}

@@ -24,6 +24,13 @@ const NFTDetailsImg: React.FC<Props> = ({ nft }) => {
   const openDetails = () => {
     setDetails(!details);
   };
+  const shortenAddress = (address: string) => {
+    if (address?.length < 25) {
+      return address;
+    }
+    address = address?.substr(0, 25);
+    return `${address}...`;
+  };
   return (
     <div className={Style.nftDetailsImg}>
       <div className={Style.nftDetailsImg_box}>
@@ -63,9 +70,7 @@ const NFTDetailsImg: React.FC<Props> = ({ nft }) => {
         </div>
         {description && (
           <div className={Style.nftDetailsImg_box_description_box}>
-            <p>
-              {nft?.description}
-            </p>
+            <p>{nft?.description}</p>
           </div>
         )}
         <div
@@ -81,11 +86,10 @@ const NFTDetailsImg: React.FC<Props> = ({ nft }) => {
             <p>
               <small>Contact Address</small>
               <br></br>
-              {nft?.seller}
+              {shortenAddress(nft?.seller)}
             </p>
             <p>
-              <small>Token ID</small>{" "}
-              {nft?.tokenId}
+              <small>Token ID</small> {nft?.tokenId}
             </p>
           </div>
         )}

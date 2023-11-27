@@ -22,7 +22,6 @@ const Search = () => {
       setNFTsCopy(item);
     });
   }, []);
-
   const onHandleSearch = (value: string) => {
     interface NFT {
       name: string;

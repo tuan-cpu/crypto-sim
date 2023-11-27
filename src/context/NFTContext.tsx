@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import { ethers } from "ethers";
 import axios from "axios";
 import FormData from "form-data";
@@ -106,7 +112,7 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     // let lastIndex = name.lastIndexOf(".");
     // let newName = name.substring(0,lastIndex);
     const metadataFileName = `${name}.json`; // Include the .json extension
-  
+
     const data = JSON.stringify({
       pinataContent: {
         name: name,
@@ -122,7 +128,7 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
         name: `CryptoSimsMeta/${metadataFileName}`, // Use the metadata file name
       },
     });
-  
+
     try {
       const res = await axios.post(
         "https://api.pinata.cloud/pinning/pinJSONToIPFS",
@@ -139,7 +145,6 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
       console.log(error);
     }
   };
-  
 
   const createNFT = async (
     formInput: {
@@ -155,11 +160,38 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     file: File
   ) => {
     try {
-      const { name, description, price, website, collection, royalties, size, properties } = formInput;
-      if (!name || !description || !price || !file || !collection || !royalties || !size || !properties)
+      const {
+        name,
+        description,
+        price,
+        website,
+        collection,
+        royalties,
+        size,
+        properties,
+      } = formInput;
+      if (
+        !name ||
+        !description ||
+        !price ||
+        !file ||
+        !collection ||
+        !royalties ||
+        !size ||
+        !properties
+      )
         return console.log("Missing data for creating NFT");
       const imageURI = await pinFileToIPFS(file);
-      const tokenURI = await pinJSONToIPFS(imageURI, name, description, website, collection, royalties, size, properties);
+      const tokenURI = await pinJSONToIPFS(
+        imageURI,
+        name,
+        description,
+        website,
+        collection,
+        royalties,
+        size,
+        properties
+      );
       console.log(tokenURI);
     } catch (error) {
       console.log("Error while creating NFT!");
@@ -168,10 +200,10 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
 
   //NFT CREATE
   const buySim = async () => {
-    return await nftContract.buySim();
+    return await nftContract.buySim({ value: ethToWei("0.02") });
   };
   const breedSim = async (matronId: number, sireId: number) => {
-    return await nftContract.breedSim(matronId, sireId);
+    return await nftContract.breedSim(matronId, sireId, { value: "0.05" });
   };
   const ownedSim = async () => {
     return await nftContract.ownedSims();
@@ -181,17 +213,19 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
   };
   const tokenUri = async (tokenId: number) => {
     return await nftContract.tokenURI(tokenId);
-  }
+  };
 
   //MARKETPLACE
   const getListingPrice = async () => {
     return await nftContract.getListingPrice();
   };
-  const listNFT = async (tokenId: number, price: string) => {
-    const weiPrice = ethToWei(price);
+  const listNFT = async (tokenId: number, price: number) => {
+    const weiPrice = ethToWei(price.toString());
     const listingPrice = await getListingPrice();
+    const ethListingPrice = weiToEth(listingPrice);
+    const sentValue = price + Number(ethListingPrice);
     return await nftContract.listNFT(tokenId, weiPrice, {
-      value: weiPrice + listingPrice,
+      value: ethToWei(sentValue.toString()),
     });
   };
   const cancelListNFT = async (tokenId: number) => {
@@ -220,21 +254,23 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
           escrow: string;
           sold: boolean;
         }) => {
-          const tokenId = item.tokenId;
+          const tokenId = Number(BigInt(item.tokenId));
           const seller = item.seller;
           const escrow = item.escrow;
           const tokenURI = await nftContract.tokenURI(tokenId);
-          const {
-            data: { image, name, description },
-          } = await axios.get(tokenURI);
+          const response = await fetch(tokenURI);
+          const metadata = await response.json();
+          const tokenDescription = metadata.description;
+          const tokenName = metadata.name;
+          const image = await fetchNFTImageFromIPFS(tokenId);
           const ethPrice = weiToEth(item.price);
           return {
             ethPrice,
             tokenId,
             seller,
             escrow,
-            name,
-            description,
+            tokenName,
+            tokenDescription,
             image,
             tokenURI,
           };
@@ -258,21 +294,23 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
             escrow: string;
             sold: boolean;
           }) => {
-            const tokenId = item.tokenId;
+            const tokenId = Number(BigInt(item.tokenId));
             const seller = item.seller;
             const escrow = item.escrow;
             const tokenURI = await nftContract.tokenURI(tokenId);
-            const {
-              data: { image, name, description },
-            } = await axios.get(tokenURI);
+            const response = await fetch(tokenURI);
+            const metadata = await response.json();
+            const tokenDescription = metadata.description;
+            const tokenName = metadata.name;
+            const image = await fetchNFTImageFromIPFS(tokenId);
             const ethPrice = weiToEth(item.price);
             return {
               ethPrice,
               tokenId,
               seller,
               escrow,
-              name,
-              description,
+              tokenName,
+              tokenDescription,
               image,
               tokenURI,
             };
@@ -285,9 +323,9 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchMarketItem();
-  },[])
+  }, []);
 
   //AUCTION
   const createAuction = async (
@@ -313,10 +351,10 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
 
   //SUPPORT FUNCTIONS
   const ethToWei = (price: string) => {
-    return ethers.utils.parseUnits(price, "ether");
+    return ethers.utils.parseEther(price);
   };
   const weiToEth = (price: string) => {
-    return ethers.utils.formatEther(Number(BigInt(price)));
+    return ethers.utils.formatEther(BigInt(price));
   };
   const extractCIDandImage = (uri: string) => {
     const result = uri.split("/");

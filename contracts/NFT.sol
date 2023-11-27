@@ -334,7 +334,7 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, Crypto
     }
 
     function buySim() external payable returns (uint256) {
-        // require(msg.value == 0.02 ether);
+        require(msg.value == 0.02 ether);
         return createSim(0, (sims.length - 1) % sims.length, msg.sender);
     }
 
@@ -343,7 +343,7 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, Crypto
         payable
         returns (uint256)
     {
-        // require(msg.value == 0.05 ether);
+        require(msg.value == 0.05 ether);
         require(ownerOf(matronId) == msg.sender && ownerOf(sireId) == msg.sender, "Not your sim!");
         return createSim(matronId, sireId, msg.sender);
     }
