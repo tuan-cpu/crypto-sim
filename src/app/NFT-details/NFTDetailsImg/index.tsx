@@ -6,7 +6,6 @@ import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 
 //INTERNAL IMPORT
 import Style from "./NFTDetailsImg.module.css";
-import images from "../../../img";
 
 interface Props {
   nft: any;
@@ -24,9 +23,6 @@ const NFTDetailsImg: React.FC<Props> = ({ nft }) => {
   };
   const openDetails = () => {
     setDetails(!details);
-  };
-  const getImageSrc = (imageIPFS: string) => {
-    return imageIPFS.substring(7, imageIPFS.length);
   };
   return (
     <div className={Style.nftDetailsImg}>
@@ -49,8 +45,7 @@ const NFTDetailsImg: React.FC<Props> = ({ nft }) => {
           </div>
           <div className={Style.nftDetailsImg_box_NFT_img}>
             <Image
-              // src={`https://gateway.pinata.cloud/ipfs${getImageSrc(nft.image)}`}
-              src={images.nft_image_1}
+              src={nft?.image}
               className={Style.nftDetailsImg_box_NFT_img_img}
               alt="NFT image"
               width={700}
@@ -84,13 +79,12 @@ const NFTDetailsImg: React.FC<Props> = ({ nft }) => {
           <div className={Style.nftDetailsImg_box_details_box}>
             <small>2000 x 2000 px.IMAGE(685kb)</small>
             <p>
-              <small>Contract Address</small>
+              <small>Contact Address</small>
               <br></br>
               {nft?.seller}
             </p>
             <p>
-              <small>Token ID</small>
-              <br></br>
+              <small>Token ID</small>{" "}
               {nft?.tokenId}
             </p>
           </div>

@@ -79,7 +79,7 @@
     color: var(--main-bg-color);
     padding: .3rem;
     border-radius: .3rem;
-    margin-left: 1rem;
+    margin: 1rem;
     position: relative;
     bottom: -5px;
 }

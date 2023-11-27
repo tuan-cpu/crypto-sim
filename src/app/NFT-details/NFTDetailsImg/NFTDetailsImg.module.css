@@ -1,5 +1,5 @@
 .nftDetailsImg{
-    width: 100%;
+    width: fit-content;
 }
 .nftDetailsImg_box_NFT{
     display: grid;

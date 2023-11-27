@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import {
   MdVerified,
@@ -21,7 +21,10 @@ import { Button } from "@/components";
 import Link from "next/link";
 import { BsThreeDots } from "react-icons/bs";
 
-const AuthorProfileCard = () => {
+interface Props {
+  wallet: string,
+}
+const AuthorProfileCard:React.FC<Props> = ({wallet}) => {
   const [share, setShare] = useState(false);
   const [report, setReport] = useState(false);
   const textRef = useRef<HTMLInputElement>(null);
@@ -61,7 +64,7 @@ const AuthorProfileCard = () => {
           <div className={Style.authorProfileCard_box_info_address}>
             <input
               type="text"
-              defaultValue="0x1234567890myaddress"
+              defaultValue={wallet}
               id="myInput"
               ref={textRef}
             />
@@ -93,7 +96,7 @@ const AuthorProfileCard = () => {
           </div>
         </div>
         <div className={Style.authorProfileCard_box_share}>
-          <Button btnText="Follow" handleClick={() => {}} />
+          <Button btnText="Follow" handleClick={() => { } } icon={undefined} classStyle={undefined} />
           <MdCloudUpload
             onClick={() => openShare()}
             className={Style.authorProfileCard_box_share_icon}

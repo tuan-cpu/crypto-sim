@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 //INTERNAL IMPORT
 import Style from "./Author.module.css";
@@ -13,7 +14,8 @@ import FollowerTabCard from "@/components/FollowerTab/FollowerTabCard";
 import { useNFTContext } from "@/context/NFTContext";
 import { useConnectWalletContext } from "@/context/ConnectWalletContext";
 
-const Author = () => {
+const UserProfile = () => {
+  const searchParams = useSearchParams();
   const popularArray = [
     {
       user: images.user1,
@@ -45,6 +47,11 @@ const Author = () => {
 
   const { ownedSim, tokenUri, fetchNFTImageFromIPFS } = useNFTContext();
   const { wallet } = useConnectWalletContext();
+  const [targetedWallet, setTargetedWallet] = useState("");
+  useEffect(()=>{
+    const walletId = searchParams.get("targetUser") || wallet;
+    setTargetedWallet(walletId);
+  },[])
   //SUPPORT FUNCTIONS
   const bigIntArrayConverter = (array: any[]) => {
     let result = [];
@@ -81,7 +88,7 @@ const Author = () => {
   return (
     <div className={Style.author}>
       <Banner bannerImage={images.creatorbackground1} />
-      <AuthorProfileCard wallet={wallet}/>
+      <AuthorProfileCard wallet={targetedWallet}/>
       <AuthorTaps
         setCollectibles={setCollectibles}
         setCreated={setCreated}
@@ -111,4 +118,4 @@ const Author = () => {
   );
 };
 
-export default Author;
+export default UserProfile;

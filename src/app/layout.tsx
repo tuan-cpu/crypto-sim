@@ -6,6 +6,7 @@ import "./globals.css";
 import { Footer, Navbar } from "@/components";
 import { ConnectWalletContextProvider } from "@/context/ConnectWalletContext";
 import { NFTContextProvider } from "@/context/NFTContext";
+import { ControlContextProvider } from "@/context/ControlContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,8 +20,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <ConnectWalletContextProvider>
           <NFTContextProvider>
+            <ControlContextProvider>
             <Navbar />
             {children}
+            </ControlContextProvider>
           </NFTContextProvider>
           <Footer />
         </ConnectWalletContextProvider>

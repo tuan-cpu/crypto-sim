@@ -8,6 +8,7 @@ import Link from "next/link";
 //INTERNAL IMPORT
 import Style from "./NFTCardTwo.module.css";
 import { LikeProfile } from "@/components";
+import { useControlContext } from "@/context/ControlContext";
 
 interface Props {
   element: any;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const NFTCardTwo: React.FC<Props> = ({ element, index }) => {
+  const { updateSelectedNFT } = useControlContext();
   const [like, setLike] = useState(false);
   const [likeInc, setLikeInc] = useState(21);
   const likeNFT = () => {
@@ -26,12 +28,27 @@ const NFTCardTwo: React.FC<Props> = ({ element, index }) => {
       setLikeInc(likeInc - 1);
     }
   };
-  const getImageSrc = (imageIPFS: string) => {
-    return imageIPFS.substring(7, imageIPFS.length);
-  };
   return (
-    <Link href={{ pathname: "/NFT-details", query: element }} key={index+1}>
-      <div className={Style.nftCardTwo}>
+    <Link
+      href={{
+        pathname: "/NFT-details",
+      }}
+      key={index + 1}
+    >
+      <div
+        className={Style.nftCardTwo}
+        onClick={() =>
+          updateSelectedNFT({
+            image: element.tokenUri,
+            tokenId: element.tokenId,
+            name: element.tokenName,
+            seller: element.seller || "",
+            escrow:
+              element.escrow || "0x2822126c7d88Fd8128Ca79ea7953ac0ec05442E3",
+            price: element.price || 0,
+          })
+        }
+      >
         <div className={Style.nftCardTwo_box}>
           <div className={Style.nftCardTwo_box_like}>
             <div className={Style.nftCardTwo_box_like_box}>
@@ -47,26 +64,25 @@ const NFTCardTwo: React.FC<Props> = ({ element, index }) => {
           </div>
           <div className={Style.nftCardTwo_box_img}>
             <Image
-              src={`https://gateway.pinata.cloud/ipfs${getImageSrc(
-                element.image
-              )}`}
+              src={element.tokenUri}
               alt="NFT"
               width={500}
-              style={{ objectFit: "cover", height: 300 }}
+              height={300}
+              style={{ objectFit: "cover" }}
               className={Style.nftCardTwo_box_img_img}
             />
           </div>
           <div className={Style.nftCardTwo_box_info}>
             <div className={Style.nftCardTwo_box_info_left}>
               <LikeProfile />
-              <p>{element.name}</p>
+              <p>{element.tokenName}</p>
             </div>
             <span>4{index + 2}</span>
           </div>
           <div className={Style.nftCardTwo_box_price}>
             <div className={Style.nftCardTwo_box_price_box}>
               <small>Current Bid</small>
-              <p>{element.price} ETH</p>
+              <p>{element.price || 0} ETH</p>
             </div>
             <p className={Style.nftCardTwo_box_price_stock}>
               <MdTimer /> <span>{index + 1} hours left</span>

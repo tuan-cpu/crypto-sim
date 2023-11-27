@@ -129,7 +129,7 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
         </div>
         <div className={Style.nftDescription_box_profile}>
           <h1>
-            {nft?.name} #{nft?.tokenId}
+            {nft?.name}
           </h1>
           <div className={Style.nftDescription_box_profile_box}>
             <div className={Style.nftDescription_box_profile_box_left}>
@@ -146,7 +146,9 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                 <Link
                   href={{
                     pathname: "/author-profile",
-                    query: `${nft?.seller}`,
+                    query: {
+                      targetUser: nft?.seller
+                    },
                   }}
                 >
                   <span>
@@ -219,16 +221,12 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
               {wallet == nft?.seller.toLowerCase() ? (
                 <p>You cannot buy your own NFT</p>
               ) : wallet == nft?.escrow.toLowerCase() ? (
-                <div
-                  className={Style.nftDescription_box_profile_bidding_button}
-                >
-                  <Button
-                    btnText="List on Marketplace"
-                    handleClick={() => {}}
-                    icon={<FaWallet />}
-                    classStyle={Style.button}
-                  />
-                </div>
+                <Button
+                  btnText="List on Marketplace"
+                  handleClick={() => {}}
+                  icon={<FaWallet />}
+                  classStyle={Style.button}
+                />
               ) : (
                 <Button
                   btnText="Buy NFT"

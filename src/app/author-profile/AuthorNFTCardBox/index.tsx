@@ -12,6 +12,7 @@ interface Props {
   like: boolean;
   follower: boolean;
   following: boolean;
+  nftArray: any[];
 }
 
 const AuthorNFTCardBox: React.FC<Props> = ({
@@ -20,6 +21,7 @@ const AuthorNFTCardBox: React.FC<Props> = ({
   like,
   follower,
   following,
+  nftArray
 }) => {
   const collectiblesArray = [
     images.nft_image_1,
@@ -72,7 +74,7 @@ const AuthorNFTCardBox: React.FC<Props> = ({
   return (
     <div className={Style.authorNFTCardBox}>
       {collectibles &&
-        collectiblesArray.map((element, index) => (
+        nftArray.map((element, index) => (
           <NFTCardTwo element={element} index={index + 1} key={index+1}/>
         ))}
       {created &&

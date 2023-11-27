@@ -39,6 +39,7 @@ type NFTContextType = {
   breedSim: any;
   ownedSim: any;
   ownerOf: any;
+  tokenUri: any;
   getListingPrice: any;
   listNFT: any;
   cancelListNFT: any;
@@ -178,6 +179,9 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
   const ownerOf = async (tokenId: number) => {
     return await nftContract.ownerOf(tokenId);
   };
+  const tokenUri = async (tokenId: number) => {
+    return await nftContract.tokenURI(tokenId);
+  }
 
   //MARKETPLACE
   const getListingPrice = async () => {
@@ -205,7 +209,6 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     return await nftContract.buyNFT(tokenId, { value: weiPrice });
   };
 
-  const [marketItemList, setMarketItemList] = useState([]);
   const fetchMarketItem = async () => {
     const data = await nftContract.fetchMarketItem();
     const items = await Promise.all(
@@ -338,6 +341,7 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
         breedSim,
         ownedSim,
         ownerOf,
+        tokenUri,
         getListingPrice,
         listNFT,
         cancelListNFT,
