@@ -229,8 +229,8 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                   <p>You cannot buy your own NFT</p>
                 ) : (
                   <Button
-                    btnText="Buy NFT"
-                    handleClick={() => buyNFT()}
+                    btnText="Bid"
+                    handleClick={() => {}}
                     icon={<FaPercentage />}
                     classStyle={Style.button}
                   />
@@ -240,9 +240,9 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
           ) : (
             <div className={Style.nftDescription_box_profile_bidding}>
               <div className={Style.nftDescription_box_profile_bidding_button}>
-                {wallet == nft?.seller.toLowerCase() ? (
+                {wallet == nft?.seller?.toLowerCase() ? (
                   <p>You cannot buy your own NFT</p>
-                ) : wallet == nft?.escrow.toLowerCase() ? 
+                ) : wallet == nft?.escrow?.toLowerCase() ? 
                 openPricing?(
                   <Button btnText="Confirm" handleClick={async () => {
                     listNFT(nft?.tokenId, price);
@@ -257,7 +257,9 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                 ) : (
                   <Button
                     btnText="Buy NFT"
-                    handleClick={() => buyNFT()}
+                    handleClick={() => {
+                      buyNFT(nft.tokenId, nft.price)
+                    }}
                     icon={<FaPercentage />}
                     classStyle={Style.button}
                   />
