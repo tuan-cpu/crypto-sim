@@ -13,6 +13,7 @@ import {
   TiSocialYoutube,
   TiSocialInstagram,
 } from "react-icons/ti";
+import { GrClose } from "react-icons/gr";
 
 //INTERNAL IMPORT
 import Style from "./AuthorProfileCard.module.css";
@@ -29,10 +30,18 @@ interface Props {
 }
 const AuthorProfileCard: React.FC<Props> = ({ wallet }) => {
   const { wallet: currentWallet } = useConnectWalletContext();
-  const { buySim } = useNFTContext();
+  const { buySim, breedSim } = useNFTContext();
   const [share, setShare] = useState(false);
   const [report, setReport] = useState(false);
+  const [popup, setPopup] = useState(false);
+  const [breedPopup, setBreedPopup] = useState(false);
+  const [breedInfo, setBreedInfo] = useState<{matronId: number, sireId: number}>({
+    matronId: 0,
+    sireId: 0
+  })
   const textRef = useRef<HTMLInputElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const breedPopupRef = useRef<HTMLDivElement>(null);
 
   const copyAddress = async () => {
     if (textRef.current) {
@@ -47,6 +56,60 @@ const AuthorProfileCard: React.FC<Props> = ({ wallet }) => {
     setReport(!report);
     setShare(false);
   };
+  const openPopup = () => {
+    setPopup(true);
+  };
+  const openBreedPopup = () => {
+    setBreedPopup(true);
+  }
+  const updateMatronId = (newMatronId: number) => {
+    setBreedInfo((prevBreedInfo) => ({
+      ...prevBreedInfo,
+      matronId: newMatronId,
+    }));
+  };
+  const updateSireId = (newSireId: number) => {
+    setBreedInfo((prevBreedInfo) => ({
+      ...prevBreedInfo,
+      sireId: newSireId,
+    }));
+  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node)
+      ) {
+        // Clicked outside the popup, close it
+        setPopup(false);
+      }
+    };
+    // Attach the event listener to the document body
+    document.body.addEventListener("click", handleClickOutside);
+
+    // Cleanup the event listener when the component is unmounted
+    return () => {
+      document.body.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+  useEffect(() => {
+    const handleClickOutsideBreed = (event: MouseEvent) => {
+      if (
+        breedPopupRef.current &&
+        !breedPopupRef.current.contains(event.target as Node)
+      ) {
+        // Clicked outside the popup, close it
+        setBreedPopup(false);
+      }
+    };
+    // Attach the event listener to the document body
+    document.body.addEventListener("click", handleClickOutsideBreed);
+
+    // Cleanup the event listener when the component is unmounted
+    return () => {
+      document.body.removeEventListener("click", handleClickOutsideBreed);
+    };
+  }, []);
   return (
     <div className={Style.authorProfileCard}>
       <div className={Style.authorProfileCard_box}>
@@ -104,7 +167,7 @@ const AuthorProfileCard: React.FC<Props> = ({ wallet }) => {
           {currentWallet === wallet ? (
             <Button
               btnText="Mint New Sim"
-              handleClick={()=>buySim()}
+              handleClick={openPopup}
               icon={undefined}
               classStyle={undefined}
             />
@@ -168,6 +231,25 @@ const AuthorProfileCard: React.FC<Props> = ({ wallet }) => {
           )}
         </div>
       </div>
+      {popup && (
+        <div className={Style.authorProfileCard_popup} ref={popupRef}>
+          <div className={Style.authorProfileCard_popup_box}>
+            <Button btnText="Buy Sim" handleClick={buySim} icon={undefined} classStyle={Style.button}/>
+            <Button btnText="Breed Sim" handleClick={openBreedPopup} icon={undefined} classStyle={Style.button}/>
+          </div>
+        </div>
+      )}
+      {breedPopup && (
+        <div className={Style.authorProfileCard_popup} ref={breedPopupRef}>
+          <div className={Style.authorProfileCard_popup_box_second}>
+            <div className={Style.authorProfileCard_popup_box_second_box}>
+              <input type="number" placeholder="MatronID" onChange={(e)=> updateMatronId(Number(e.target.value))}/>
+              <input type="number" placeholder="SireID" onChange={(e)=> updateSireId(Number(e.target.value))}/>
+            </div>
+            <Button btnText="Breed" handleClick={()=>breedSim(breedInfo.matronId, breedInfo.sireId)} icon={undefined} classStyle={Style.button}/>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -44,7 +44,7 @@ const NFTCardTwo: React.FC<Props> = ({ element, index }) => {
             tokenId: element.tokenId,
             name: element.tokenName,
             description: element.tokenDescription,
-            seller: element.seller,
+            seller: element.seller || " ",
             escrow: element.escrow,
             price: element.ethPrice || 0,
           })
@@ -78,7 +78,7 @@ const NFTCardTwo: React.FC<Props> = ({ element, index }) => {
               <LikeProfile />
               <p>{element.tokenName}</p>
             </div>
-            <span>4{index + 2}</span>
+            <span>{index + 2}</span>
           </div>
           <div className={Style.nftCardTwo_box_price}>
             <div className={Style.nftCardTwo_box_price_box}>

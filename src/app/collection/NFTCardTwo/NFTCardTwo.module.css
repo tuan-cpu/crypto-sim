@@ -1,5 +1,5 @@
 .nftCardTwo{
-    /* width: 80%; */
+    width: 80%;
     margin: 0 auto;
 }
 .nftCardTwo_box{
@@ -93,8 +93,16 @@
     font-size: 1.1rem;
 }
 
-@media screen and (min-width-screen: 320px) and (max-width-screen: 375px) {
+/* @media screen and (min-device-width: 320px) and (max-device-width: 375px) {
     .nftCardTwo{
         width: 80%;
+    }
+} */
+@media screen and (min-device-width: 1024px) and (max-device-width: 1440px) {
+    .nftCardTwo{
+        width: 100%;
+    }
+    .nftCardTwo_box_info_left p{
+        font-size: 1.5rem;
     }
 }

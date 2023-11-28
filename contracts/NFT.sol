@@ -344,6 +344,7 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, Crypto
         returns (uint256)
     {
         require(msg.value == 0.05 ether);
+        require(matronId != sireId, "2 sims must be different!");
         require(ownerOf(matronId) == msg.sender && ownerOf(sireId) == msg.sender, "Not your sim!");
         return createSim(matronId, sireId, msg.sender);
     }

@@ -9,11 +9,6 @@ import { useControlContext } from '@/context/ControlContext';
 
 const NFTDetails = () => {
   const { selectedNFT } = useControlContext();
-  useEffect(()=>{
-    if(!selectedNFT) {
-      window.history.back();
-    }
-  },[selectedNFT])
   return (
     <div>
       <NFTDetailsPage nft={selectedNFT}/>

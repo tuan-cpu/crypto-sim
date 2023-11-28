@@ -45,7 +45,6 @@ const Author = () => {
 
   const { ownedSim, tokenUri, fetchNFTImageFromIPFS } = useNFTContext();
   const { wallet } = useConnectWalletContext();
-  console.log(wallet);
   //SUPPORT FUNCTIONS
   const bigIntArrayConverter = (array: any[]) => {
     let result = [];
@@ -56,29 +55,37 @@ const Author = () => {
   }
   const getAllTokenURI = async(array: any[]) => {
     let converted_array = bigIntArrayConverter(array);
-    let result = [];
+    let result = {};
     for(let i=0; i<converted_array.length; i++){
       const uri = await tokenUri(converted_array[i]);
       const response = await fetch(uri);
       const metadata = await response.json();
       const image = await fetchNFTImageFromIPFS(converted_array[i]);
-      result.push({
+      result = {
         tokenId: converted_array[i],
         image: image,
         tokenURI: uri,
         tokenName: metadata.name,
-        tokenDescription: metadata.description
-      })
+        tokenDescription: metadata.description,
+        escrow: wallet
+      };
+      setCurrentlyOwnedSim((prev) => [...prev, result]);
     }
-    return result;
   }
   useEffect(()=>{
+    let isMounted = true;
     const getOwnedSim =async () => {
-      const response = await ownedSim();
-      const uri_array = await getAllTokenURI(response);
-      setCurrentlyOwnedSim(uri_array);
+      try {
+        const response = await ownedSim();
+        if(isMounted) await getAllTokenURI(response);
+      } catch (error) {
+        console.log("Error while fetching owned Sim");
+      }
     }
     getOwnedSim();
+    return () => {
+      isMounted = false;
+    };
   },[])
   return (
     <div className={Style.author}>

@@ -203,7 +203,7 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     return await nftContract.buySim({ value: ethToWei("0.02") });
   };
   const breedSim = async (matronId: number, sireId: number) => {
-    return await nftContract.breedSim(matronId, sireId, { value: "0.05" });
+    return await nftContract.breedSim(matronId, sireId, { value: ethToWei("0.05") });
   };
   const ownedSim = async () => {
     return await nftContract.ownedSims();

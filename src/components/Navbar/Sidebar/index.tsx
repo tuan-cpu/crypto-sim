@@ -9,7 +9,6 @@ import {
   TiSocialYoutube,
   TiSocialInstagram,
   TiArrowSortedDown,
-  TiArrowSortedUp,
 } from "react-icons/ti";
 
 //INTERNAL IMPORT

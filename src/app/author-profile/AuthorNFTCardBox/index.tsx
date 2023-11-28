@@ -21,7 +21,7 @@ const AuthorNFTCardBox: React.FC<Props> = ({
   like,
   follower,
   following,
-  nftArray
+  nftArray,
 }) => {
   const collectiblesArray = [
     images.nft_image_1,

@@ -2,12 +2,71 @@
     width: 100%;
     z-index: 1111;
     margin-top: 5rem;
+    display: grid;
+    grid-template-areas: 'stack';
+}
+.authorProfileCard_popup{
+    width: 80%;
+    height: 100%;
+    backdrop-filter: blur(10px);
+    /* background: rgba(255, 255, 255, 0.8); */
+    grid-area: stack;
+    margin: 0 auto;
+    z-index: 1111111;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.authorProfileCard_popup_box{
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   width: 100%;
+   justify-items: center;
+}
+.authorProfileCard_popup_box_second{
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    justify-items: center;
+    width: 100%;
+    gap: 2rem;
+}
+.authorProfileCard_popup_box_second_box{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    justify-items: center;
+}
+.authorProfileCard_popup_box_second_box input{
+    width: 80%;
+    background-color: var(--main-bg-color);
+    border: 1px solid var(--icons-color);
+    border-radius: 3rem;
+    padding: 2rem;
+    font-size: 1.5rem;
+}
+.authorProfileCard_popup_box_second_box input::placeholder{
+    font-size: 1.5rem;
+    /* color: var(--icons-color); */
+}
+.button{
+    background-color: var(--main-bg-color);
+    color: var(--icons-color);
+    padding: 1rem 4rem;
+    font-size: 2rem;
+    border-radius: 3rem;
+    transition: all .3s ease-in;
+}
+.button:hover{
+    background-color: var(--icons-color);
+    color: var(--main-bg-color);
 }
 .authorProfileCard_box{
+    grid-area: stack;
     width: 80%;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1fr 4fr 1.3fr;
+    grid-template-columns: 1fr 4fr 2fr;
     align-items: center;
     background-color: var(--main-bg-color);
     border-radius: 1rem;
@@ -136,6 +195,20 @@
         padding: .5rem .5rem 1.5rem;
         gap: 1rem;
     }
+    .authorProfileCard_popup{
+        width: 90%;
+    }
+    .authorProfileCard_popup_box{
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .authorProfileCard_popup_box_second{
+        grid-template-rows: 2fr 1fr;
+    }
+    .authorProfileCard_popup_box_second_box{
+        grid-template-columns: 1fr;
+        gap: .5rem;
+    }
     .authorProfileCard_box_img{
         width: 50%;
     }
@@ -177,6 +250,9 @@
     }
     .authorProfileCard_box_info_address input{
         width: auto;
+    }
+    .authorProfileCard_box_share{
+        grid-column: 1/-1;
     }
 }
 @media screen and (min-device-width: 1025px) {
