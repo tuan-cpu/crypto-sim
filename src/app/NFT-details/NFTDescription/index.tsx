@@ -239,6 +239,16 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
             </div>
           ) : (
             <div className={Style.nftDescription_box_profile_bidding}>
+              <div className={Style.nftDescription_box_profile_bidding_price}>
+                <div
+                  className={Style.nftDescription_box_profile_bidding_price_bid}
+                >
+                  <small>Price</small>
+                  <p>
+                    {nft?.price} ETH <span>(≈ $2999.99)</span>
+                  </p>
+                </div>
+              </div>
               <div className={Style.nftDescription_box_profile_bidding_button}>
                 {wallet == nft?.seller?.toLowerCase() ? (
                   <p>You cannot buy your own NFT</p>
@@ -246,7 +256,7 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                 openPricing?(
                   <Button btnText="Confirm" handleClick={async () => {
                     listNFT(nft?.tokenId, price);
-                  } } icon={undefined} classStyle={undefined}/>
+                  } } icon={undefined} classStyle={Style.button}/>
                 ):(
                   <Button
                     btnText="List on Marketplace"
