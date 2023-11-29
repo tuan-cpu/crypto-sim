@@ -48,15 +48,15 @@ const Author = () => {
   //SUPPORT FUNCTIONS
   const bigIntArrayConverter = (array: any[]) => {
     let result = [];
-    for(let i=0; i< array.length; i++){
+    for (let i = 0; i < array.length; i++) {
       result[i] = Number(BigInt(array[i]));
     }
     return result;
-  }
-  const getAllTokenURI = async(array: any[]) => {
+  };
+  const getAllTokenURI = async (array: any[]) => {
     let converted_array = bigIntArrayConverter(array);
     let result = {};
-    for(let i=0; i<converted_array.length; i++){
+    for (let i = 0; i < converted_array.length; i++) {
       const uri = await tokenUri(converted_array[i]);
       const response = await fetch(uri);
       const metadata = await response.json();
@@ -67,30 +67,30 @@ const Author = () => {
         tokenURI: uri,
         tokenName: metadata.name,
         tokenDescription: metadata.description,
-        escrow: wallet
+        escrow: wallet,
       };
       setCurrentlyOwnedSim((prev) => [...prev, result]);
     }
-  }
-  useEffect(()=>{
+  };
+  useEffect(() => {
     let isMounted = true;
-    const getOwnedSim =async () => {
+    const getOwnedSim = async () => {
       try {
         const response = await ownedSim();
-        if(isMounted) await getAllTokenURI(response);
+        if (isMounted) await getAllTokenURI(response);
       } catch (error) {
         console.log("Error while fetching owned Sim");
       }
-    }
-    getOwnedSim();
+    };
+    if (wallet !== "") getOwnedSim();
     return () => {
       isMounted = false;
     };
-  },[])
+  }, [wallet]);
   return (
     <div className={Style.author}>
       <Banner bannerImage={images.creatorbackground1} />
-      <AuthorProfileCard wallet={wallet}/>
+      <AuthorProfileCard wallet={wallet} />
       <AuthorTaps
         setCollectibles={setCollectibles}
         setCreated={setCreated}

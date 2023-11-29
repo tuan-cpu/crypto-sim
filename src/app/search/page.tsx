@@ -41,14 +41,6 @@ const Search = () => {
       setNFTs(nftsCopy);
     }
   }
-  // const collectionArray = [
-  //   images.nft_image_1,
-  //   images.nft_image_2,
-  //   images.nft_image_3,
-  //   images.nft_image_1,
-  //   images.nft_image_2,
-  //   images.nft_image_3
-  // ]
   return (
     <div className={Style.search}>
       <Banner bannerImage={images.creatorbackground1} />

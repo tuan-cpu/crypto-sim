@@ -82,8 +82,8 @@ const NFTCardTwo: React.FC<Props> = ({ element, index }) => {
           </div>
           <div className={Style.nftCardTwo_box_price}>
             <div className={Style.nftCardTwo_box_price_box}>
-              <small>Current Bid</small>
-              <p>{element.price || 0} ETH</p>
+              <small>Price</small>
+              <p>{element.ethPrice || 0} ETH</p>
             </div>
             <p className={Style.nftCardTwo_box_price_stock}>
               <MdTimer /> <span>{index + 1} hours left</span>
