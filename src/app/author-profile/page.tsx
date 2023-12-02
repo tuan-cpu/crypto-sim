@@ -45,7 +45,6 @@ const Author = () => {
 
   const { ownedSim, tokenUri, fetchNFTImageFromIPFS } = useNFTContext();
   const { wallet } = useConnectWalletContext();
-  //SUPPORT FUNCTIONS
   const bigIntArrayConverter = (array: any[]) => {
     let result = [];
     for (let i = 0; i < array.length; i++) {

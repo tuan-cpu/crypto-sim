@@ -30,6 +30,7 @@ const Navbar = () => {
 
   const openMenu = (e: any) => {
     const btnText = e.target.innerText;
+    setOpenSideBar(false);
     if (btnText == "Discover") {
       setDiscover(!discover);
       setHelp(false);
@@ -56,18 +57,19 @@ const Navbar = () => {
   };
 
   const openProfile = () => {
-    if (!profile) {
-      setDiscover(false);
-      setHelp(false);
-      setNotification(false);
-      setProfile(true);
-    } else {
-      setProfile(false);
-    }
+    setProfile(!profile);
+    setOpenSideBar(false);
+    setDiscover(false);
+    setHelp(false);
+    setNotification(false);
   };
 
   const openSidebar = () => {
     setOpenSideBar(!openSideBar);
+    setDiscover(false);
+    setHelp(false);
+    setNotification(false);
+    setProfile(false);
   };
 
   //SMART CONTRACT SECTION
