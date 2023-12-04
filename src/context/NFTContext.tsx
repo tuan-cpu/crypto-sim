@@ -333,10 +333,6 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     }
   };
 
-  useEffect(() => {
-    fetchMarketItem();
-  }, []);
-
   //AUCTION
   const createAuction = async (
     tokenId: number,
