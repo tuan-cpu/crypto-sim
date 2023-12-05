@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   MdVerified,
@@ -36,7 +36,7 @@ interface Props {
 }
 
 const NFTDescription: React.FC<Props> = ({ nft }) => {
-  const { buyNFT, listNFT, createAuction } = useNFTContext();
+  const { buyNFT, listNFT, createAuction, getBidHistoryOfAToken, getOwnershipHistory } = useNFTContext();
   const { wallet } = useConnectWalletContext();
   const [social, setSocial] = useState(false);
   const [NFTMenu, setNFTMenu] = useState(false);
@@ -46,7 +46,11 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
   const [openPricing, setOpenPricing] = useState(false);
   const [openAuctioning, setOpenAuctioning] = useState(false);
   const [price, setPrice] = useState(0);
-  const [duration, setDuration] = useState<{day: number, hour: number, minute: number}>({
+  const [duration, setDuration] = useState<{
+    day: number;
+    hour: number;
+    minute: number;
+  }>({
     day: 0,
     hour: 0,
     minute: 0,
@@ -59,6 +63,23 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
     images.user9,
   ];
   const ownerArray = [images.user5, images.user2, images.user7, images.user4];
+  const [bidHistory, setBidHistory] = useState<any>([]);
+  const [ownershipHistory, setOwnershipHistory] = useState<any>([]);
+  useEffect(()=> {
+    let isMounted = true;
+    const getHistory = async() => {
+      if(isMounted){
+        const bid_history = await getBidHistoryOfAToken(nft.tokenId);
+        const ownership_history = await getOwnershipHistory(nft.tokenId);
+        setBidHistory(bid_history);
+        setOwnershipHistory(ownership_history);
+      }
+    }
+    getHistory();
+    return () => {
+      isMounted = false;
+    };
+  },[nft])
 
   const openSocial = () => {
     setSocial(!social);
@@ -83,74 +104,6 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
       setHistory(false);
       setProvenance(false);
       setOwner(true);
-    }
-  };
-  const renderButtonGroup = (type: string) => {
-    if (type == "auction") {
-      return (
-        <div className={Style.nftDescription_box_profile_bidding_button}>
-          {wallet == nft?.seller?.toLowerCase() ? (
-            <p>You cannot bid your own NFT</p>
-          ) : wallet == nft?.escrow?.toLowerCase() ? (
-            openAuctioning ? (
-              <Button
-                btnText="Confirm"
-                handleClick={() => {
-                  const durationInSecond:number = duration.minute * 60 + duration.hour*60*60 + duration.day*60*60*24;
-                  createAuction(nft.tokenId, price.toString(), durationInSecond);
-                }}
-                icon={undefined}
-                classStyle={Style.button}
-              />
-            ) : (
-              <Button
-                btnText="Create Auction"
-                handleClick={() => setOpenAuctioning(true)}
-                icon={<RiAuctionLine />}
-                classStyle={Style.button}
-              />
-            )
-          ) : (
-            <Button
-              btnText="Bid NFT"
-              handleClick={() => buyNFT(nft.tokenId, nft.price)}
-              icon={<FaPercentage />}
-              classStyle={Style.button}
-            />
-          )}
-        </div>
-      );
-    } else {
-      return (
-        <div className={Style.nftDescription_box_profile_bidding_button}>
-          {wallet == nft?.seller?.toLowerCase() ? (
-            <p>You cannot buy your own NFT</p>
-          ) : wallet == nft?.escrow?.toLowerCase() ? (
-            openPricing ? (
-              <Button
-                btnText="Confirm"
-                handleClick={() => listNFT(nft?.tokenId, price)}
-                icon={undefined}
-                classStyle={Style.button}
-              />
-            ) : (
-              <Button
-                btnText="List on Marketplace"
-                handleClick={() => setOpenPricing(true)}
-                icon={<FaWallet />}
-                classStyle={Style.button}
-              />
-            )
-          ) : (
-            <Button
-              btnText="Buy NFT"
-              handleClick={() => buyNFT(nft.tokenId, nft.price)}
-              icon={<FaPercentage />}
-              classStyle={Style.button}
-            />
-          )}
-        </div>
-      );
     }
   };
   return (
@@ -328,6 +281,58 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                   </div>
                 </div>
               )}
+              <div className={Style.nftDescription_box_profile_bidding_button}>
+                {wallet == nft?.seller?.toLowerCase() ? (
+                  <p>You cannot bid your own NFT</p>
+                ) : (
+                  ""
+                )}
+                {wallet == nft?.escrow?.toLowerCase() ? (
+                  <div
+                    className={
+                      Style.nftDescription_box_profile_bidding_button_box
+                    }
+                  >
+                    <Button
+                      btnText="List on Marketplace"
+                      handleClick={() => {
+                        setOpenPricing(!openPricing);
+                        setOpenAuctioning(false);
+                      }}
+                      icon={<FaWallet />}
+                      classStyle={Style.button}
+                    />
+                    <Button
+                      btnText="Create Auction"
+                      handleClick={() => {
+                        setOpenAuctioning(!openAuctioning);
+                        setOpenPricing(false);
+                      }}
+                      icon={<RiAuctionLine />}
+                      classStyle={Style.button}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className={
+                      Style.nftDescription_box_profile_bidding_button_box
+                    }
+                  >
+                    <Button
+                      btnText="Bid NFT"
+                      handleClick={() => buyNFT(nft.tokenId, nft.price)}
+                      icon={<FaPercentage />}
+                      classStyle={Style.button}
+                    />
+                    <Button
+                      btnText="Buy NFT"
+                      handleClick={() => buyNFT(nft.tokenId, nft.price)}
+                      icon={<FaPercentage />}
+                      classStyle={Style.button}
+                    />
+                  </div>
+                )}
+              </div>
               {openPricing ? (
                 <div
                   className={Style.nftDescription_box_profile_bidding_pricing}
@@ -376,7 +381,12 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                         type="number"
                         placeholder="Day"
                         step="1"
-                        onChange={(e) => setDuration((prev)=> ({...prev, day: Number(e.target.value)}))}
+                        onChange={(e) =>
+                          setDuration((prev) => ({
+                            ...prev,
+                            day: Number(e.target.value),
+                          }))
+                        }
                       />
                     </div>
                     <div
@@ -388,7 +398,12 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                         type="number"
                         placeholder="Hours"
                         step="1"
-                        onChange={(e) => setDuration((prev)=> ({...prev, hour: Number(e.target.value)}))}
+                        onChange={(e) =>
+                          setDuration((prev) => ({
+                            ...prev,
+                            hour: Number(e.target.value),
+                          }))
+                        }
                       />
                     </div>
                     <div
@@ -400,7 +415,12 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                         type="number"
                         placeholder="Minutes"
                         step="1"
-                        onChange={(e) => setDuration((prev)=> ({...prev, minute: Number(e.target.value)}))}
+                        onChange={(e) =>
+                          setDuration((prev) => ({
+                            ...prev,
+                            minute: Number(e.target.value),
+                          }))
+                        }
                       />
                     </div>
                   </div>
@@ -408,7 +428,36 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
               ) : (
                 ""
               )}
-              {renderButtonGroup("auction")}
+              {openPricing ? (
+                <Button
+                  btnText="Confirm"
+                  handleClick={() => listNFT(nft?.tokenId, price)}
+                  icon={undefined}
+                  classStyle={Style.button_confirm}
+                />
+              ) : (
+                ""
+              )}
+              {openAuctioning ? (
+                <Button
+                  btnText="Confirm"
+                  handleClick={() => {
+                    const durationInSecond: number =
+                      duration.minute * 60 +
+                      duration.hour * 60 * 60 +
+                      duration.day * 60 * 60 * 24;
+                    createAuction(
+                      nft.tokenId,
+                      price.toString(),
+                      durationInSecond
+                    );
+                  }}
+                  icon={undefined}
+                  classStyle={Style.button_confirm}
+                />
+              ) : (
+                ""
+              )}
               <div className={Style.nftDescription_box_profile_bidding_tabs}>
                 <button type="button" onClick={(e) => openTabs(e)}>
                   Bid History

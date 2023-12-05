@@ -416,7 +416,7 @@ contract TheFunixCryptoSim is ERC721, ERC721Enumerable, ERC721URIStorage, Crypto
     }
 }
 
-contract NFTMarketPlace is IERC721Receiver {
+contract NFTMarketplace is IERC721Receiver {
     function onERC721Received(address operator, address from, uint256 tokenId, bytes calldata data) pure external override returns (bytes4) {
         return IERC721Receiver.onERC721Received.selector;
     }
