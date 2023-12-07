@@ -149,6 +149,7 @@
     align-items: center;
     justify-content: center;
     gap: 1rem;
+    padding-top: 1rem;
 }
 .nftDescription_box_profile_bidding_tabs{
     margin-top: 3rem;

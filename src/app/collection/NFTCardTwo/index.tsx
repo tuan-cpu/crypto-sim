@@ -44,7 +44,7 @@ const NFTCardTwo: React.FC<Props> = ({ element, index }) => {
             tokenId: element.tokenId,
             name: element.tokenName,
             description: element.tokenDescription,
-            seller: element.seller || " ",
+            seller: element.seller,
             escrow: element.escrow,
             price: element.ethPrice || 0,
           })

@@ -3,19 +3,19 @@ import Image from "next/image";
 
 //INTERNAL IMPORT
 import Style from "./NFTTabs.module.css";
+import images from '../../../img';
 
 interface Props {
-  dataTab: any;
-  icon: any
+  dataTab: any
 }
 
-const NFTTabs: React.FC<Props> = ({ dataTab, icon }) => {
+const NFTTabs: React.FC<Props> = ({ dataTab }) => {
   return (
     <div className={Style.nftTabs}>
       {dataTab.map((element: any, index: number) => (
         <div className={Style.nftTabs_box} key={index + 1}>
           <Image
-            src={element}
+            src={images.static_profile_1}
             alt="profile-image"
             width={40}
             height={40}
@@ -23,9 +23,9 @@ const NFTTabs: React.FC<Props> = ({ dataTab, icon }) => {
           />
           <div className={Style.nftTabs_box_info}>
             <span>
-              Offer by $770 by <span className={Style.nftTabs_box_info_owner}>Lê Tuấn {icon}</span> 
+              Offer by {element.price} ETH by <span className={Style.nftTabs_box_info_owner}>{element.wallet}</span> 
             </span>
-            <small>Jun 14 - 4:12 PM</small>
+            <small>{element.time}</small>
           </div>
         </div>
       ))}

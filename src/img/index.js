@@ -48,6 +48,9 @@ import provider1 from './provider-1.png';
 import provider2 from './provider-2.png';
 import provider3 from './provider-3.png';
 import provider4 from './provider-4.png';
+import static_profile_1 from './static_1.png';
+import static_profile_2 from './static_2.png';
+import static_profile_3 from './static_3.png';
 
 export default {
   collection,
@@ -99,5 +102,8 @@ export default {
   provider1,
   provider2,
   provider3, 
-  provider4
+  provider4,
+  static_profile_1,
+  static_profile_2,
+  static_profile_3
 };

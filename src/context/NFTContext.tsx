@@ -356,7 +356,7 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     await nftContract.approve(auctionContract.address, tokenId);
     const weiPrice = ethToWei(price);
     await auctionContract.createAuction(tokenId, weiPrice, duration, {
-      value: ethToWei("0.025"),
+      value: ethers.utils.parseEther('0.025'),
     });
   };
   const bid = async (tokenId: number, price: string) => {
