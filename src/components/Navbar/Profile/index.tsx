@@ -8,8 +8,17 @@ import { TbDownloadOff, TbDownload } from "react-icons/tb";
 //INTERNAL IMPORT
 import Style from "./Profile.module.css";
 import images from "../../../img";
+import { useConnectWalletContext } from "@/context/ConnectWalletContext";
 
 const Profile = () => {
+  const { wallet } = useConnectWalletContext();
+  const shortenAddress = (address: string) => {
+    if (address?.length < 10) {
+      return address;
+    }
+    address = address?.substr(0, 10);
+    return `${address}...`;
+  };
   return (
     <div className={Style.profile}>
       <div className={Style.profile_account}>
@@ -22,14 +31,14 @@ const Profile = () => {
         />
         <div className={Style.profile_account_info}>
           <p>Tuan Le</p>
-          <small>0x123account</small>
+          <small>{shortenAddress(wallet)}</small>
         </div>
       </div>
       <div className={Style.profile_menu}>
         <div className={Style.profile_menu_item}>
           <FaUserAlt />
           <p>
-            <Link href={{ pathname: "/my-profile" }}>My Profile</Link>
+            <Link href={{ pathname: "/author-profile" }}>My Profile</Link>
           </p>
         </div>
         <div className={Style.profile_menu_item}>

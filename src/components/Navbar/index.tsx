@@ -102,7 +102,7 @@ const Navbar = () => {
             <p onClick={(e) => openMenu(e)}>Discover</p>
             {discover && (
               <div className={Style.navbar_container_right_discover_box}>
-                <Discover />
+                <Discover close={async () => setDiscover(false)}/>
               </div>
             )}
           </div>
@@ -111,7 +111,7 @@ const Navbar = () => {
             <p onClick={(e) => openMenu(e)}>Help Center</p>
             {help && (
               <div className={Style.navbar_container_right_help_box}>
-                <HelpCenter />
+                <HelpCenter close={async () => setHelp(false)} />
               </div>
             )}
           </div>

@@ -86,7 +86,7 @@ const NFTDetailsImg: React.FC<Props> = ({ nft }) => {
             <p>
               <small>Contact Address</small>
               <br></br>
-              {shortenAddress(nft?.seller)}
+              {shortenAddress(nft?.seller || nft?.escrow)}
             </p>
             <p>
               <small>Token ID</small> {nft?.tokenId}

@@ -24,7 +24,7 @@ import { RiAuctionLine } from "react-icons/ri";
 import Style from "./NFTDescription.module.css";
 import images from "../../../img";
 import { Button } from "@/components";
-import { NFTTabs } from "..";
+import TransferPopup from "./TransferPopup";
 
 //SMART CONTRACT IMPORT
 import { useNFTContext } from "@/context/NFTContext";
@@ -54,7 +54,7 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
   } = useNFTContext();
   const { wallet } = useConnectWalletContext();
   const [social, setSocial] = useState(false);
-  const [NFTMenu, setNFTMenu] = useState(false);
+  const [transfer, setTransfer] = useState(false);
   const [history, setHistory] = useState(true);
   const [provenance, setProvenance] = useState(false);
   const [owner, setOwner] = useState(false);
@@ -96,12 +96,11 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
 
   const openSocial = () => {
     setSocial(!social);
-    setNFTMenu(false);
   };
-  const openMenu = () => {
-    setNFTMenu(!NFTMenu);
+  const openTransfer = () => {
     setSocial(false);
-  };
+    setTransfer(!transfer);
+  }
   const openTabs = (e: any) => {
     const inputText = e.target as HTMLElement;
     const btnText = inputText.innerText;
@@ -133,7 +132,7 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
       <div className={Style.nftDescription_box}>
         {/* Part ONE */}
         <div className={Style.nftDescription_box_share}>
-          <p>Virtual Worlds</p>
+          <p>Category</p>
           <div className={Style.nftDescription_box_share_box}>
             <MdCloudUpload
               className={Style.nftDescription_box_share_box_icon}
@@ -158,26 +157,10 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                 </Link>
               </div>
             )}
-            <BsThreeDots
-              className={Style.nftDescription_box_share_box_icon}
-              onClick={() => openMenu()}
-            />
-            {NFTMenu && (
-              <div className={Style.nftDescription_box_share_box_social}>
-                <Link href={{ pathname: "#" }}>
-                  <BiDollar /> Change price
-                </Link>
-                <Link href={{ pathname: "#" }}>
-                  <BiTransferAlt /> Transfer
-                </Link>
-                <Link href={{ pathname: "#" }}>
-                  <MdReportProblem /> Report abuse
-                </Link>
-                <Link href={{ pathname: "#" }}>
-                  <MdOutlineDeleteSweep /> Delete item
-                </Link>
-              </div>
-            )}
+            <BiTransferAlt className={Style.nftDescription_box_transfer} onClick={() => openTransfer()}/>
+            {
+              transfer && <TransferPopup nftName={nft.name} close={async () => openTransfer()}/>
+            }
           </div>
         </div>
         <div className={Style.nftDescription_box_profile}>
@@ -217,7 +200,7 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                 <small>Collection</small>
                 <br />
                 <span>
-                  Monkey <MdVerified />
+                  CryptoSims <MdVerified />
                 </span>
               </div>
             </div>

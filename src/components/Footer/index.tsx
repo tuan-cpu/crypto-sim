@@ -18,6 +18,7 @@ import images from "../../img";
 import { Discover, HelpCenter } from "../Navbar";
 
 const Footer = () => {
+  const doNothing = () => {};
   return (
     <div className={Style.footer}>
       <div className={Style.footer_box}>
@@ -47,11 +48,11 @@ const Footer = () => {
         </div>
         <div className={Style.footer_box_discover}>
           <h3>Discover</h3>
-          <Discover />
+          <Discover close={() => doNothing}/>
         </div>
         <div className={Style.footer_box_help}>
           <h3>Help Center</h3>
-          <HelpCenter />
+          <HelpCenter  close={() => doNothing}/>
         </div>
         <div className={Style.subscribe}>
           <div className={Style.subscribe_box}>

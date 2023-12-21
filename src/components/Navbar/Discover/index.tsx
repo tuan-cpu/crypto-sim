@@ -4,7 +4,11 @@ import Link from "next/link";
 //INTERNAL IMPORT
 import Style from "./Discover.module.css";
 
-const Discover = () => {
+interface Props {
+  close: () => {},
+}
+
+const Discover:React.FC<Props> = ({close}) => {
   //----------DISCOVER NAVIGATION MENU
   const discover = [
     {
@@ -19,22 +23,22 @@ const Discover = () => {
       name: "Author Profile",
       link: "author-profile",
     },
-    {
-      name: "NFT Details",
-      link: "NFT-details",
-    },
+    // {
+    //   name: "NFT Details",
+    //   link: "NFT-details",
+    // },
     {
       name: "Account Setting",
-      link: "account-setting",
+      link: "account-settings",
     },
     {
       name: "Connect Wallet",
       link: "connect-wallet",
     },
-    {
-      name: "Blog",
-      link: "blog",
-    },
+    // {
+    //   name: "Blog",
+    //   link: "blog",
+    // },
     {
       name: "Upload NFT",
       link: "upload-nft"
@@ -43,7 +47,7 @@ const Discover = () => {
   return (
     <div>
       {discover.map((element, index) => (
-        <div key={index + 1} className={Style.discover}>
+        <div key={index + 1} className={Style.discover} onClick={close}>
           <Link href={{ pathname: element.link }}>{element.name}</Link>
         </div>
       ))}

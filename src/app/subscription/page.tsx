@@ -32,7 +32,7 @@ const page = () => {
       popular: "",
       service: [
         "Everything in Basic",
-        "Unlimited Bui;ds",
+        "Unlimited Builds",
         "Advanced Analysis",
         "Company Evaluations",
       ],

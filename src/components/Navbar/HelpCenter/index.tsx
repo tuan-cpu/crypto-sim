@@ -4,7 +4,11 @@ import Link from "next/link";
 //INTERNAL IMPORT
 import Style from "./HelpCenter.module.css";
 
-const HelpCenter = () => {
+interface Props {
+  close: () => {},
+}
+
+const HelpCenter:React.FC<Props> = ({close}) => {
   const helpCenter = [
     {
       name: "About",
@@ -14,14 +18,14 @@ const HelpCenter = () => {
       name: "Contact Us",
       link: "contact-us",
     },
-    {
-      name: "Sign Up",
-      link: "sign-up",
-    },
-    {
-      name: "Sign In",
-      link: "sign-in",
-    },
+    // {
+    //   name: "Sign Up",
+    //   link: "sign-up",
+    // },
+    // {
+    //   name: "Sign In",
+    //   link: "sign-in",
+    // },
     {
       name: "Subscription",
       link: "subscription",
@@ -30,7 +34,7 @@ const HelpCenter = () => {
   return (
     <div className={Style.box}>
       {helpCenter.map((element, index) => (
-        <div key={index + 1} className={Style.helpCenter}>
+        <div key={index + 1} className={Style.helpCenter} onClick={close}>
           <Link href={{ pathname: element.link }}>{element.name}</Link>
         </div>
       ))}

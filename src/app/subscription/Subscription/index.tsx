@@ -14,9 +14,11 @@ const Subscription: React.FC<Props> = ({ index, element }) => {
     <div className={Style.subscriptionBox}>
       <div className={Style.subscriptionBox_box}>
         <span className={Style.subscriptionBox_box_span}>{element.plan}</span>
-        <small className={Style.subscriptionBox_box_small}>
-          {element.popular || ""}
-        </small>
+        {element.popular &&         
+          <small className={Style.subscriptionBox_box_small}>
+            {element.popular}
+          </small>
+        }
         <p className={Style.subscriptionBox_box_para}>{element.price}</p>
         <div className={Style.subscriptionBox_box_info}>
           {element.service.map((service: string, i: number) => (
