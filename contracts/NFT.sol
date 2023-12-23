@@ -668,6 +668,7 @@ contract NFTAuction is IERC721Receiver {
 
     mapping(uint256 => Auction) auctions;
     mapping(uint256 => BidHistory[]) bidHistories;
+    uint256 [] auctionItemId;
 
     function createAuction(
         uint256 tokenId,
@@ -686,9 +687,10 @@ contract NFTAuction is IERC721Receiver {
             0,
             block.timestamp + duration
         );
+        auctionItemId.push(tokenId);
     }
 
-    function fetchAuctionItem() public view returns (Auction[] memory) {
+    function fetchAuctionItemOfUser() public view returns (Auction[] memory) {
         uint256 itemCount = 0;
         uint256 currentIndex = 0;
         TheFunixCryptoSim.Sim[] memory sims = nftContract.getAllSims();
@@ -709,12 +711,21 @@ contract NFTAuction is IERC721Receiver {
         return items;
     }
 
+    function fetchAllAuctionItems() public view returns (Auction[] memory) {
+        Auction[] memory items = new Auction[](auctionItemId.length);
+        for (uint256 i = 0; i < auctionItemId.length; i++) {
+                Auction storage currentItem = auctions[auctionItemId[i]];
+                items[i] = currentItem;
+        }
+        return items;
+    }
+
     function cancelAuction(uint256 tokenId) public {
         require(
             auctions[tokenId].seller == msg.sender,
             "You must be the seller to cancel this auction"
         );
-        require(block.timestamp < auctions[tokenId].endTimestamp);
+        require(block.timestamp < auctions[tokenId].endTimestamp, "Auction had ended!");
         // Transfer NFT to to the seller
         nftContract.safeTransferFrom(address(this), msg.sender, tokenId);
 
@@ -725,7 +736,7 @@ contract NFTAuction is IERC721Receiver {
     function bid(uint256 tokenId) external payable {
         Auction storage auction = auctions[tokenId];
         BidHistory[] storage bidHistory = bidHistories[tokenId];
-        require(block.timestamp < auction.endTimestamp);
+        require(block.timestamp < auction.endTimestamp, "Auction had ended!");
         require(msg.value > auction.highestBid);
 
         if (auction.highestBidder != address(0)) {
@@ -745,9 +756,10 @@ contract NFTAuction is IERC721Receiver {
         return bidHistories[tokenId];
     }
 
-    function settleAuction(uint256 tokenId) external onlyOwner {
+    function settleAuction(uint256 tokenId) external{
         Auction storage auction = auctions[tokenId];
-        require(block.timestamp > auction.endTimestamp);
+        require(block.timestamp > auction.endTimestamp, "Auction time not ended yet!");
+        require(msg.sender == owner || msg.sender == auction.highestBidder || msg.sender == auction.seller, "You must be either seller/highest bidder/contract owner to settle this auction!");
 
         // Transfer NFT to highest bidder
         nftContract.safeTransferFrom(
