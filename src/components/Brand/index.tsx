@@ -15,8 +15,8 @@ const Brand = () => {
           <h1>Earn free crypto with Ciscrypt</h1>
           <p>A creative agency that lead and inspire</p>
           <div className={Style.brand_box_left_btn}>
-            <Button btnText='Create' handleClick={()=>{}}/>
-            <Button btnText='Discover' handleClick={()=>{}}/>
+            <Button btnText='Create' handleClick={() => { } } icon={undefined} classStyle={undefined}/>
+            <Button btnText='Discover' handleClick={() => { } } icon={undefined} classStyle={undefined}/>
           </div>
         </div>
         <div className={Style.brand_box_right}>
