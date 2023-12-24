@@ -4,6 +4,8 @@
     margin-top: 5rem;
     display: grid;
     grid-template-areas: 'stack';
+    position: absolute;
+    top: 20%;
 }
 .authorProfileCard_popup{
     width: 80%;

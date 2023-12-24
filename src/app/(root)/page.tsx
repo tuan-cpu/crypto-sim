@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { UserButton } from "@clerk/nextjs";
 
 //INTERNAL IMPORT
 import Style from "./Home.module.css";
@@ -25,7 +24,6 @@ const Home = () => {
   return (
     <main>
       <div className={Style.homePage}>
-        <UserButton afterSignOutUrl="/"/>
         <HeroSection />
         <Service />
         <BigNFTSlider />

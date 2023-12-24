@@ -6,11 +6,22 @@ import Style from "../Author.module.css";
 import { Banner } from "../../collection";
 import { Brand, Title } from "@/components";
 import images from "../../../../img";
-import { AuthorNFTCardBox, AuthorProfileCard, AuthorTaps } from "..";
+import { AuthorProfileCard } from "..";
 import FollowerTabCard from "@/components/FollowerTab/FollowerTabCard";
+import { getUserProfile } from "@/lib/actions/users.actions";
 
-//IMPORT FROM SMART CONTRACT
-import { useNFTContext } from "@/context/NFTContext";
+interface UserInfo {
+  username: string;
+  email: string;
+  description: string;
+  image: string;
+  website: string;
+  facebook: string;
+  twitter: string;
+  instagram: string;
+  linkedin: string;
+  youtube: string;
+}
 
 const UserProfile = ({ params }: { params: { walletId: string } }) => {
   const popularArray = [
@@ -44,9 +55,40 @@ const UserProfile = ({ params }: { params: { walletId: string } }) => {
 
   // const { ownedSim, tokenUri, fetchNFTImageFromIPFS } = useNFTContext();
   const [targetedWallet, setTargetedWallet] = useState("");
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    username: "",
+    email: "",
+    description: "",
+    image: "",
+    website: "",
+    facebook: "",
+    twitter: "",
+    instagram: "",
+    linkedin: "",
+    youtube: "",
+  });
   useEffect(()=>{
     setTargetedWallet(params.walletId);
   },[])
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const response = await getUserProfile(targetedWallet);
+      if (response)
+        setUserInfo({
+          username: response.username,
+          email: response.email,
+          description: response.description,
+          image: response.image,
+          website: response.website,
+          facebook: response.facebook,
+          twitter: response.twitter,
+          instagram: response.instagram,
+          linkedin: response.linkedin,
+          youtube: response.youtube,
+        });
+    };
+    if (targetedWallet) fetchUserData();
+  }, [targetedWallet]);
   //SUPPORT FUNCTIONS
   // const bigIntArrayConverter = (array: any[]) => {
   //   let result = [];
@@ -83,22 +125,7 @@ const UserProfile = ({ params }: { params: { walletId: string } }) => {
   return (
     <div className={Style.author}>
       <Banner bannerImage={images.creatorbackground1} />
-      <AuthorProfileCard wallet={targetedWallet}/>
-      {/* <AuthorTaps
-        setCollectibles={setCollectibles}
-        setCreated={setCreated}
-        setLike={setLike}
-        setFollower={setFollower}
-        setFollowing={setFollowing}
-      />
-      <AuthorNFTCardBox
-        collectibles={collectibles}
-        created={created}
-        like={like}
-        follower={follower}
-        following={following}
-        nftArray={currentlyOwnedSim}
-      /> */}
+      <AuthorProfileCard wallet={targetedWallet} userData={userInfo}/>
       <Title
         heading="Popular Creator"
         paragraph="Click on music icon and enjoy NFT music or audio"

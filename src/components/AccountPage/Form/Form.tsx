@@ -13,7 +13,17 @@ import {
 import Style from ".//Form.module.css";
 import { Button } from "@/components";
 
-const Form = () => {
+interface Props {
+  profileInfo: any;
+  handleChange: (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLTextAreaElement>,
+    name: string
+  ) => void;
+  handleSubmit: () => void;
+}
+const Form: React.FC<Props> = ({ profileInfo, handleChange, handleSubmit }) => {
   return (
     <div className={Style.form}>
       <div className={Style.form_box}>
@@ -24,6 +34,8 @@ const Form = () => {
               type="text"
               placeholder="Your username"
               className={Style.form_box_input_username}
+              onChange={(e) => handleChange(e, "username")}
+              defaultValue={profileInfo.username}
             />
           </div>
           <div className={Style.form_box_input}>
@@ -32,7 +44,12 @@ const Form = () => {
               <div className={Style.form_box_input_box_icon}>
                 <HiOutlineMail />
               </div>
-              <input type="text" placeholder="Your email" />
+              <input
+                type="text"
+                placeholder="Your email"
+                onChange={(e) => handleChange(e, "email")}
+                defaultValue={profileInfo.email}
+              />
             </div>
           </div>
           <div className={Style.form_box_input}>
@@ -43,6 +60,8 @@ const Form = () => {
               cols={30}
               rows={6}
               placeholder="Introduce yourself in few lines..."
+              onChange={(e) => handleChange(e, "description")}
+              value={profileInfo.description}
             ></textarea>
           </div>
           <div className={Style.form_box_input}>
@@ -51,7 +70,12 @@ const Form = () => {
               <div className={Style.form_box_input_box_icon}>
                 <MdOutlineHttp />
               </div>
-              <input type="text" placeholder="Your websites" />
+              <input
+                type="text"
+                placeholder="Your websites"
+                onChange={(e) => handleChange(e, "website")}
+                defaultValue={profileInfo.website}
+              />
             </div>
           </div>
           <div className={Style.form_box_social}>
@@ -61,7 +85,12 @@ const Form = () => {
                 <div className={Style.form_box_input_box_icon}>
                   <TiSocialFacebook />
                 </div>
-                <input type="text" placeholder="Your facebook" />
+                <input
+                  type="text"
+                  placeholder="Your facebook"
+                  onChange={(e) => handleChange(e, "facebook")}
+                  defaultValue={profileInfo.facebook}
+                />
               </div>
             </div>
             <div className={Style.form_box_input}>
@@ -70,7 +99,12 @@ const Form = () => {
                 <div className={Style.form_box_input_box_icon}>
                   <TiSocialTwitter />
                 </div>
-                <input type="text" placeholder="Your twitter" />
+                <input
+                  type="text"
+                  placeholder="Your twitter"
+                  onChange={(e) => handleChange(e, "twitter")}
+                  defaultValue={profileInfo.twitter}
+                />
               </div>
             </div>
             <div className={Style.form_box_input}>
@@ -79,7 +113,12 @@ const Form = () => {
                 <div className={Style.form_box_input_box_icon}>
                   <TiSocialInstagram />
                 </div>
-                <input type="text" placeholder="Your instagram" />
+                <input
+                  type="text"
+                  placeholder="Your instagram"
+                  onChange={(e) => handleChange(e, "instagram")}
+                  defaultValue={profileInfo.instagram}
+                />
               </div>
             </div>
             <div className={Style.form_box_input}>
@@ -88,7 +127,12 @@ const Form = () => {
                 <div className={Style.form_box_input_box_icon}>
                   <TiSocialLinkedin />
                 </div>
-                <input type="text" placeholder="Your linkedin" />
+                <input
+                  type="text"
+                  placeholder="Your linkedin"
+                  onChange={(e) => handleChange(e, "linkedin")}
+                  defaultValue={profileInfo.linkedin}
+                />
               </div>
             </div>
             <div className={Style.form_box_input}>
@@ -97,7 +141,12 @@ const Form = () => {
                 <div className={Style.form_box_input_box_icon}>
                   <TiSocialYoutube />
                 </div>
-                <input type="text" placeholder="Your youtube" />
+                <input
+                  type="text"
+                  placeholder="Your youtube"
+                  onChange={(e) => handleChange(e, "youtube")}
+                  defaultValue={profileInfo.youtube}
+                />
               </div>
             </div>
           </div>
@@ -105,16 +154,27 @@ const Form = () => {
             <label htmlFor="wallet">Wallet Address</label>
             <div className={Style.form_box_input_box}>
               <div className={Style.form_box_input_box_icon}>
-                <MdWallet/>
+                <MdWallet />
               </div>
-              <input type="text" placeholder="Your wallet address"/>
+              <input
+                type="text"
+                placeholder="Your wallet address"
+                defaultValue={profileInfo.wallet}
+                disabled={profileInfo.wallet !== ""}
+                onChange={(e) => handleChange(e, "wallet")}
+              />
               <div className={Style.form_box_input_box_icon}>
-                <MdOutlineContentCopy/>
+                <MdOutlineContentCopy />
               </div>
             </div>
           </div>
           <div className={Style.form_box_btn}>
-            <Button btnText={"Upload Profile"} handleClick={()=>{}} icon={undefined} classStyle={Style.button}/>
+            <Button
+              btnText={"Upload Profile"}
+              handleClick={handleSubmit}
+              icon={undefined}
+              classStyle={Style.button}
+            />
           </div>
         </form>
       </div>

@@ -1,0 +1,38 @@
+.accountPage{
+    width: 100%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    margin-top: 3rem;
+    gap: 3rem;
+    align-items: flex-start;
+}
+.accountPage_img{
+    margin-top: 2rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.accountPage_img p{
+    padding-top: 1rem;
+}
+.accountPage_img_img{
+    border-radius: 50%;
+}
+.accountPage_img_para{
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 0;
+}
+
+@media screen and (max-width: 35em) {
+    .accountPage{
+        grid-template-columns: 1fr;
+    }
+}
+@media screen and (min-width: 425px) and (max-width: 768px) {
+    .accountPage{
+        grid-template-columns: 1fr;
+    }
+}

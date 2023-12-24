@@ -46,7 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setOpenSideBar, wallet, connectWallet
     },
     {
       name: "Account Setting",
-      link: "account-setting",
+      link: "account-settings",
     },
     {
       name: "Connect Wallet",

@@ -12,6 +12,7 @@ import FollowerTabCard from "@/components/FollowerTab/FollowerTabCard";
 //IMPORT FROM SMART CONTRACT
 import { useNFTContext } from "@/context/NFTContext";
 import { useConnectWalletContext } from "@/context/ConnectWalletContext";
+import { useDataContext } from "@/context/DataContext";
 
 const Author = () => {
   const popularArray = [
@@ -45,6 +46,7 @@ const Author = () => {
 
   const { ownedSim, tokenUri, fetchNFTImageFromIPFS } = useNFTContext();
   const { wallet } = useConnectWalletContext();
+  const { userInfo } = useDataContext();
   const bigIntArrayConverter = (array: any[]) => {
     let result = [];
     for (let i = 0; i < array.length; i++) {
@@ -89,7 +91,7 @@ const Author = () => {
   return (
     <div className={Style.author}>
       <Banner bannerImage={images.creatorbackground1} />
-      <AuthorProfileCard wallet={wallet} />
+      {userInfo && <AuthorProfileCard wallet={wallet} userData={userInfo}/>}
       <AuthorTaps
         setCollectibles={setCollectibles}
         setCreated={setCreated}

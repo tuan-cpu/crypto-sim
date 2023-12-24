@@ -13,7 +13,6 @@ import {
   TiSocialYoutube,
   TiSocialInstagram,
 } from "react-icons/ti";
-import { GrClose } from "react-icons/gr";
 
 //INTERNAL IMPORT
 import Style from "./AuthorProfileCard.module.css";
@@ -27,8 +26,9 @@ import { useNFTContext } from "@/context/NFTContext";
 
 interface Props {
   wallet: string;
+  userData: any;
 }
-const AuthorProfileCard: React.FC<Props> = ({ wallet }) => {
+const AuthorProfileCard: React.FC<Props> = ({ wallet, userData }) => {
   const { wallet: currentWallet } = useConnectWalletContext();
   const { buySim, breedSim } = useNFTContext();
   const [share, setShare] = useState(false);
@@ -115,7 +115,7 @@ const AuthorProfileCard: React.FC<Props> = ({ wallet }) => {
       <div className={Style.authorProfileCard_box}>
         <div className={Style.authorProfileCard_box_img}>
           <Image
-            src={images.nft_image_1}
+            src={userData.image || images.nft_image_1}
             className={Style.authorProfileCard_box_img_img}
             alt="nft-images"
             width={220}
@@ -124,7 +124,7 @@ const AuthorProfileCard: React.FC<Props> = ({ wallet }) => {
         </div>
         <div className={Style.authorProfileCard_box_info}>
           <h2>
-            Dony Herrera{""}
+            {userData.username || "Unknown"}{""}
             <span>
               <MdVerified />
             </span>
@@ -142,8 +142,7 @@ const AuthorProfileCard: React.FC<Props> = ({ wallet }) => {
             />
           </div>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            {userData.description}
           </p>
           <div className={Style.authorProfileCard_box_info_social}>
             <Link href={{ pathname: "#" }}>

@@ -16,6 +16,7 @@ import LikeProfile from "./LikeProfile";
 import Slider from "./Slider";
 import Brand from "./Brand";
 import Video from "./Video";
+import AccountPage from "./AccountPage";
 
 export {
   Navbar,
@@ -35,5 +36,6 @@ export {
   LikeProfile,
   Slider,
   Brand,
-  Video
+  Video,
+  AccountPage
 };

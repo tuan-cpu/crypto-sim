@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 //IMPORT ICON
 import { MdNotifications } from "react-icons/md";
@@ -19,8 +20,11 @@ import { Button } from "..";
 
 //IMPORT FROM SMART CONTRACT
 import { useConnectWalletContext } from "@/context/ConnectWalletContext";
+import { useDataContext } from "@/context/DataContext";
+import { getUserProfile } from "@/lib/actions/users.actions";
 
 const Navbar = () => {
+  const router = useRouter();
   //--USESTATE COMPONENTS
   const [discover, setDiscover] = useState(false);
   const [help, setHelp] = useState(false);
@@ -74,12 +78,32 @@ const Navbar = () => {
 
   //SMART CONTRACT SECTION
   const { wallet, connectWalletPressed } = useConnectWalletContext();
+  const { setUserInfo, userInfo } = useDataContext();
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const response = await getUserProfile(wallet);
+      if (response)
+        setUserInfo({
+          username: response.username,
+          email: response.email,
+          description: response.description,
+          image: response.image,
+          website: response.website,
+          facebook: response.facebook,
+          twitter: response.twitter,
+          instagram: response.instagram,
+          linkedin: response.linkedin,
+          youtube: response.youtube,
+        });
+    };
+    if (wallet) fetchUserData();
+  }, [wallet]);
 
   return (
     <div className={Style.navbar}>
       <div className={Style.navbar_container}>
         <div className={Style.navbar_container_left}>
-          <div className={Style.logo}>
+          <div className={Style.logo} onClick={()=> router.push('/')}>
             <Image
               src={images.logo}
               alt="NFT Marketplace"
@@ -102,7 +126,7 @@ const Navbar = () => {
             <p onClick={(e) => openMenu(e)}>Discover</p>
             {discover && (
               <div className={Style.navbar_container_right_discover_box}>
-                <Discover close={async () => setDiscover(false)}/>
+                <Discover close={async () => setDiscover(false)} />
               </div>
             )}
           </div>
@@ -147,7 +171,7 @@ const Navbar = () => {
           <div className={Style.navbar_container_right_profile}>
             <div className={Style.navbar_container_right_profile_box}>
               <Image
-                src={images.user1}
+                src={userInfo.image || images.user1}
                 alt="Profile"
                 width={40}
                 height={40}
@@ -167,7 +191,11 @@ const Navbar = () => {
           {/* SIDEBAR COMPONENT */}
           {openSideBar && (
             <div className={Style.sideBar}>
-              <Sidebar setOpenSideBar={setOpenSideBar} wallet={wallet} connectWallet={connectWalletPressed} />
+              <Sidebar
+                setOpenSideBar={setOpenSideBar}
+                wallet={wallet}
+                connectWallet={connectWalletPressed}
+              />
             </div>
           )}
         </div>

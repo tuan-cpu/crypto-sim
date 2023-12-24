@@ -7,7 +7,7 @@ import { Footer, Navbar } from "@/components";
 import { ConnectWalletContextProvider } from "@/context/ConnectWalletContext";
 import { NFTContextProvider } from "@/context/NFTContext";
 import { ControlContextProvider } from "@/context/ControlContext";
-import { ClerkProvider } from "@clerk/nextjs";
+import { DataContextProvider } from "@/context/DataContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,20 +17,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={inter.className}>
-          <ConnectWalletContextProvider>
-            <NFTContextProvider>
-              <ControlContextProvider>
+    <html lang="en">
+      <body className={inter.className}>
+        <ConnectWalletContextProvider>
+          <NFTContextProvider>
+            <ControlContextProvider>
+              <DataContextProvider>
                 <Navbar />
                 {children}
-              </ControlContextProvider>
-            </NFTContextProvider>
-            <Footer />
-          </ConnectWalletContextProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+              </DataContextProvider>
+            </ControlContextProvider>
+          </NFTContextProvider>
+          <Footer />
+        </ConnectWalletContextProvider>
+      </body>
+    </html>
   );
 }
