@@ -3,7 +3,7 @@ import React, { useState } from "react";
 //INTERNAL IMPORT
 import Style from "./AuthorNFTCardBox.module.css";
 import images from "../../../../img";
-import { NFTCardTwo } from "@/app/(root)/collection";
+import { NFTCard } from "..";
 import FollowerTabCard from "@/components/FollowerTab/FollowerTabCard";
 
 interface Props {
@@ -75,15 +75,15 @@ const AuthorNFTCardBox: React.FC<Props> = ({
     <div className={Style.authorNFTCardBox}>
       {collectibles &&
         nftArray.map((element, index) => (
-          <NFTCardTwo element={element} index={index + 1} key={index+1}/>
+          <NFTCard element={element} index={index + 1} key={index+1}/>
         ))}
       {created &&
         createdArray.map((element, index) => (
-          <NFTCardTwo element={element} index={index + 1} key={index+1}/>
+          <NFTCard element={element} index={index + 1} key={index+1}/>
         ))}
       {like &&
         likeArray.map((element, index) => (
-          <NFTCardTwo element={element} index={index + 1} key={index+1}/>
+          <NFTCard element={element} index={index + 1} key={index+1}/>
         ))}
       {follower &&
         followerArray.map((element, index) => (

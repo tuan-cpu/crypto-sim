@@ -35,10 +35,13 @@ const AuthorProfileCard: React.FC<Props> = ({ wallet, userData }) => {
   const [report, setReport] = useState(false);
   const [popup, setPopup] = useState(false);
   const [breedPopup, setBreedPopup] = useState(false);
-  const [breedInfo, setBreedInfo] = useState<{matronId: number, sireId: number}>({
+  const [breedInfo, setBreedInfo] = useState<{
+    matronId: number;
+    sireId: number;
+  }>({
     matronId: 0,
-    sireId: 0
-  })
+    sireId: 0,
+  });
   const textRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const breedPopupRef = useRef<HTMLDivElement>(null);
@@ -61,7 +64,7 @@ const AuthorProfileCard: React.FC<Props> = ({ wallet, userData }) => {
   };
   const openBreedPopup = () => {
     setBreedPopup(true);
-  }
+  };
   const updateMatronId = (newMatronId: number) => {
     setBreedInfo((prevBreedInfo) => ({
       ...prevBreedInfo,
@@ -124,7 +127,8 @@ const AuthorProfileCard: React.FC<Props> = ({ wallet, userData }) => {
         </div>
         <div className={Style.authorProfileCard_box_info}>
           <h2>
-            {userData.username || "Unknown"}{""}
+            {userData.username || "Unknown"}
+            {""}
             <span>
               <MdVerified />
             </span>
@@ -141,25 +145,33 @@ const AuthorProfileCard: React.FC<Props> = ({ wallet, userData }) => {
               className={Style.authorProfileCard_box_info_address_icon}
             />
           </div>
-          <p>
-            {userData.description}
-          </p>
+          <p>{userData.description}</p>
           <div className={Style.authorProfileCard_box_info_social}>
-            <Link href={{ pathname: "#" }}>
-              <TiSocialFacebook />
-            </Link>
-            <Link href={{ pathname: "#" }}>
-              <TiSocialInstagram />
-            </Link>
-            <Link href={{ pathname: "#" }}>
-              <TiSocialLinkedin />
-            </Link>
-            <Link href={{ pathname: "#" }}>
-              <TiSocialTwitter />
-            </Link>
-            <Link href={{ pathname: "#" }}>
-              <TiSocialYoutube />
-            </Link>
+            {userData.facebook !== "" && (
+              <Link href={{ pathname: userData.facebook }} target="_blank">
+                <TiSocialFacebook />
+              </Link>
+            )}
+            {userData.instagram !== "" && (
+              <Link href={{ pathname: userData.instagram }}>
+                <TiSocialInstagram />
+              </Link>
+            )}
+            {userData.linkedin !== "" && (
+              <Link href={{ pathname: userData.linkedin }}>
+                <TiSocialLinkedin />
+              </Link>
+            )}
+            {userData.twitter !== "" && (
+              <Link href={{ pathname: userData.twitter }}>
+                <TiSocialTwitter />
+              </Link>
+            )}
+            {userData.youtube !== "" && (
+              <Link href={{ pathname: userData.youtube }}>
+                <TiSocialYoutube />
+              </Link>
+            )}
           </div>
         </div>
         <div className={Style.authorProfileCard_box_share}>
@@ -233,8 +245,18 @@ const AuthorProfileCard: React.FC<Props> = ({ wallet, userData }) => {
       {popup && (
         <div className={Style.authorProfileCard_popup} ref={popupRef}>
           <div className={Style.authorProfileCard_popup_box}>
-            <Button btnText="Buy Sim" handleClick={buySim} icon={undefined} classStyle={Style.button}/>
-            <Button btnText="Breed Sim" handleClick={openBreedPopup} icon={undefined} classStyle={Style.button}/>
+            <Button
+              btnText="Buy Sim"
+              handleClick={buySim}
+              icon={undefined}
+              classStyle={Style.button}
+            />
+            <Button
+              btnText="Breed Sim"
+              handleClick={openBreedPopup}
+              icon={undefined}
+              classStyle={Style.button}
+            />
           </div>
         </div>
       )}
@@ -242,10 +264,23 @@ const AuthorProfileCard: React.FC<Props> = ({ wallet, userData }) => {
         <div className={Style.authorProfileCard_popup} ref={breedPopupRef}>
           <div className={Style.authorProfileCard_popup_box_second}>
             <div className={Style.authorProfileCard_popup_box_second_box}>
-              <input type="number" placeholder="MatronID" onChange={(e)=> updateMatronId(Number(e.target.value))}/>
-              <input type="number" placeholder="SireID" onChange={(e)=> updateSireId(Number(e.target.value))}/>
+              <input
+                type="number"
+                placeholder="MatronID"
+                onChange={(e) => updateMatronId(Number(e.target.value))}
+              />
+              <input
+                type="number"
+                placeholder="SireID"
+                onChange={(e) => updateSireId(Number(e.target.value))}
+              />
             </div>
-            <Button btnText="Breed" handleClick={()=>breedSim(breedInfo.matronId, breedInfo.sireId)} icon={undefined} classStyle={Style.button}/>
+            <Button
+              btnText="Breed"
+              handleClick={() => breedSim(breedInfo.matronId, breedInfo.sireId)}
+              icon={undefined}
+              classStyle={Style.button}
+            />
           </div>
         </div>
       )}
