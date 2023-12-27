@@ -21,6 +21,11 @@ const updateUserProfile = async (userProfile: UserProfile) => {
 const getUserProfile = async (id: string) => {
     return await dataInstance.getUserProfile(id);
 }
+const getUserImage = async (id: string) => {
+    const response = await dataInstance.getUserProfile(id);
+    if(response) return response.image;
+    else return null;
+}
 const uploadAvatar = async (id: string, file: File) => {
     await dataInstance.deleteOldAvatar(id);
     return await dataInstance.uploadAvatar(id, file);
@@ -31,4 +36,4 @@ const updateAvatar = async (id: string, url: string) => {
     window.location.reload();
 }
 
-export { updateUserProfile, uploadAvatar, updateAvatar, getUserProfile };
+export { updateUserProfile, uploadAvatar, updateAvatar, getUserProfile, getUserImage };

@@ -30,6 +30,7 @@ import TransferPopup from "./TransferPopup";
 import { useNFTContext } from "@/context/NFTContext";
 import { useConnectWalletContext } from "@/context/ConnectWalletContext";
 import constant from "@/context/constant";
+import NFTTabs from "../NFTTabs";
 
 interface Props {
   nft: {
@@ -478,13 +479,13 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                   Owner
                 </button>
               </div>
-              {/* {bidHistory && (
+              {bidHistory && (
                 <div
                   className={Style.nftDescription_box_profile_bidding_box_card}
                 >
-                  <NFTTabs dataTab={bidHistory}/>
+                  <NFTTabs dataTab={bidHistory} type="auction"/>
                 </div>
-              )} */}
+              )}
               {/* {provenance && (
                 <div
                   className={Style.nftDescription_box_profile_bidding_box_card}
@@ -492,13 +493,13 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                   <NFTTabs dataTab={provenanceArray}/>
                 </div>
               )} */}
-              {/* {ownershipHistory && (
+              {ownershipHistory && (
                 <div
                   className={Style.nftDescription_box_profile_bidding_box_card}
                 >
-                  <NFTTabs dataTab={ownershipHistory}/>
+                  <NFTTabs dataTab={ownershipHistory} type="ownership"/>
                 </div>
-              )} */}
+              )}
             </div>
           )}
         </div>

@@ -42,6 +42,7 @@ type NFTContextType = {
   fetchNFTImageFromIPFS: any;
   getOwnershipHistory: any;
   getBidHistoryOfAToken: any;
+  weiToEth: any;
 };
 const connectContract = async () => {
   const web3Modal = new Web3Modal()
@@ -416,7 +417,8 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
         getHighestBidderOfAnAuction,
         fetchNFTImageFromIPFS,
         getOwnershipHistory,
-        getBidHistoryOfAToken
+        getBidHistoryOfAToken,
+        weiToEth
       }}
     >
       {children}
