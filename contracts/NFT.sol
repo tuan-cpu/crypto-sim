@@ -496,6 +496,10 @@ contract NFTMarketplace is IERC721Receiver {
     mapping(uint256 => uint256) escrowAmounts;
     uint256 itemsSold = 0;
 
+    function updateBaseContract(address _nftContract) public onlyOwner {
+        nftContract = TheFunixCryptoSim(_nftContract);
+    }
+
     function updateListingPrice(uint256 _newPrice) public onlyOwner {
         listingPrice = _newPrice;
     }
@@ -567,7 +571,7 @@ contract NFTMarketplace is IERC721Receiver {
 
     function buyNFT(uint256 tokenId) public payable {
         Listing storage listing = listings[tokenId];
-        require(msg.value == listing.price);
+        require(msg.value == listing.price, "You need to pay the price exactly!");
 
         listings[tokenId].escrow = payable(msg.sender);
         listings[tokenId].sold = true;
@@ -670,12 +674,16 @@ contract NFTAuction is IERC721Receiver {
     mapping(uint256 => BidHistory[]) bidHistories;
     uint256 [] auctionItemId;
 
+    function updateBaseContract(address _nftContract) public onlyOwner {
+        nftContract = TheFunixCryptoSim(_nftContract);
+    }
+
     function createAuction(
         uint256 tokenId,
         uint256 minBid,
         uint256 duration
     ) external payable {
-        require(msg.value == 0.025 ether);
+        require(msg.value == 0.025 ether, "Not enough fee!");
         // Transfer NFT to contract
         nftContract.safeTransferFrom(msg.sender, address(this), tokenId);
 
@@ -737,7 +745,7 @@ contract NFTAuction is IERC721Receiver {
         Auction storage auction = auctions[tokenId];
         BidHistory[] storage bidHistory = bidHistories[tokenId];
         require(block.timestamp < auction.endTimestamp, "Auction had ended!");
-        require(msg.value > auction.highestBid);
+        require(msg.value > auction.highestBid, "Must bid higher than current value!");
 
         if (auction.highestBidder != address(0)) {
             // Refund previous bidder
