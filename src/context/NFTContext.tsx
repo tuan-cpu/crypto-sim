@@ -15,6 +15,7 @@ import contract_FCS from "../../artifacts/contracts/NFT.sol/TheFunixCryptoSim.js
 import contract_auction from "../../artifacts/contracts/NFT.sol/NFTAuction.json";
 import contract_marketplace from "../../artifacts/contracts/NFT.sol/NFTMarketPlace.json";
 import constant from "./constant.js";
+import { getUserImage } from "@/lib/actions/users.actions";
 
 //Constant attributes
 const FCS_CONTRACT_ADDRESS = constant.FCS_CONTRACT_ADDRESS;
@@ -39,10 +40,13 @@ type NFTContextType = {
   bid: any;
   settleAuction: any;
   getHighestBidderOfAnAuction: any;
+  fetchNFTDataFromIPFS: any;
   fetchNFTImageFromIPFS: any;
   getOwnershipHistory: any;
   getBidHistoryOfAToken: any;
   weiToEth: any;
+  transferNFT: any;
+  fetchAuctionItem: any;
 };
 const connectContract = async () => {
   const web3Modal = new Web3Modal()
@@ -233,8 +237,25 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
   const tokenUri = async (tokenId: number) => {
     return await nftContract.tokenURI(tokenId);
   };
+  const transferNFT = async (from: string, to: string, tokenId: number) => {
+    await nftContract.safeTransferFrom(from, to, tokenId);
+  }
   const getOwnershipHistory = async(tokenId: number) => {
-    return await nftContract.getOwnershipHistory(tokenId);
+    const response = await nftContract.getOwnershipHistory(tokenId);
+    const result = [];
+    for(let i=0; i<response.length; i++){
+      const owner = response[i].owner.toLowerCase();
+      const price = Number(BigInt(response[i].price)).toString();
+      const timestamp = Number(BigInt(response[i].timestamp));
+      const image = await getUserImage(owner);
+      result.push({
+        wallet: owner,
+        amount: weiToEth(price),
+        timestamp: timestamp,
+        image: image
+      })
+    }
+    return result;
   };
 
   //MARKETPLACE
@@ -280,22 +301,18 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
             const tokenId = Number(BigInt(item.tokenId));
             const seller = item.seller;
             const escrow = item.escrow;
+            const metadata = await fetchNFTDataFromIPFS(tokenId);
             const tokenURI = await nftContract.tokenURI(tokenId);
-            const response = await fetch(tokenURI);
-            const metadata = await response.json();
-            const tokenDescription = metadata.description;
-            const tokenName = metadata.name;
-            const image = await fetchNFTImageFromIPFS(tokenId);
+            const image = fetchNFTImageFromIPFS(metadata.image);
             const ethPrice = weiToEth(item.price);
             return {
               ethPrice,
               tokenId,
               seller,
               escrow,
-              tokenName,
-              tokenDescription,
               image,
               tokenURI,
+              metadata
             };
           }
         )
@@ -323,21 +340,17 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
             const seller = item.seller;
             const escrow = item.escrow;
             const tokenURI = await nftContract.tokenURI(tokenId);
-            const response = await fetch(tokenURI);
-            const metadata = await response.json();
-            const tokenDescription = metadata.description;
-            const tokenName = metadata.name;
-            const image = await fetchNFTImageFromIPFS(tokenId);
+            const metadata = await fetchNFTDataFromIPFS(tokenId);
+            const image = fetchNFTImageFromIPFS(metadata.image);
             const ethPrice = weiToEth(item.price);
             return {
               ethPrice,
               tokenId,
               seller,
               escrow,
-              tokenName,
-              tokenDescription,
               image,
               tokenURI,
+              metadata
             };
           }
         )
@@ -370,7 +383,26 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     return await auctionContract.settleAuction(tokenId);
   };
   const getBidHistoryOfAToken = async (tokenId: number) => {
-    return await auctionContract.getBidHistoryOfAToken(tokenId);
+    const response = await auctionContract.getBidHistoryOfAToken(tokenId);
+    const result = [];
+    for(let i=0; i<response.length; i++){
+      const owner = response[i].bidder.toLowerCase();
+      const price = Number(BigInt(response[i].bid)).toString();
+      const timestamp = Number(BigInt(response[i].timestamp));
+      const image = await getUserImage(owner);
+      result.push({
+        wallet: owner,
+        amount: weiToEth(price),
+        timestamp: timestamp,
+        image: image
+      })
+    }
+    return result;
+  }
+  const fetchAuctionItem = async () => {
+    const data = await auctionContract.fetchAllAuctionItems();
+    console.log(data);
+    return data;
   }
 
   //SUPPORT FUNCTIONS
@@ -387,11 +419,14 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
   const constructGateway = (cid: string, image: string) => {
     return "https://gateway.pinata.cloud/ipfs/" + cid + "/" + image;
   };
-  const fetchNFTImageFromIPFS = async (tokenId: number) => {
-    const uri = await nftContract.tokenURI(tokenId);
+  const fetchNFTDataFromIPFS = async (tokenId: number) => {
+    const uri = `https://gateway.pinata.cloud/ipfs/QmVfscF5ykRAoWR629sUVsit2UFH6f7cqoTwjS5PppPfZB/${tokenId+1}.json`;
     const response = await fetch(uri);
     const metadata = await response.json();
-    const [cid, image] = extractCIDandImage(metadata.image);
+    return metadata;
+  }
+  const fetchNFTImageFromIPFS = (ipfsImage: string) => {
+    const [cid, image] = extractCIDandImage(ipfsImage);
     return constructGateway(cid, image);
   };
 
@@ -404,6 +439,7 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
         ownedSim,
         ownerOf,
         tokenUri,
+        transferNFT,
         getListingPrice,
         listNFT,
         cancelListNFT,
@@ -415,10 +451,12 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
         bid,
         settleAuction,
         getHighestBidderOfAnAuction,
+        fetchNFTDataFromIPFS,
         fetchNFTImageFromIPFS,
         getOwnershipHistory,
         getBidHistoryOfAToken,
-        weiToEth
+        weiToEth,
+        fetchAuctionItem
       }}
     >
       {children}

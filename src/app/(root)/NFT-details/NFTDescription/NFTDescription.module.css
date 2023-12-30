@@ -143,6 +143,11 @@
     font-weight: 900;
     margin: 1rem 0;
 }
+.nftDescription_box_profile_bidding_button p{
+    padding: .5rem;
+    color: red;
+    font-size: 1rem;
+}
 .nftDescription_box_profile_bidding_button_box{
     display: flex;
     flex-wrap: wrap;

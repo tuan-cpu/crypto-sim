@@ -24,7 +24,6 @@ const getUserProfile = async (id: string) => {
 const getUserImage = async (id: string) => {
     const response = await dataInstance.getUserProfile(id);
     if(response) return response.image;
-    else return null;
 }
 const uploadAvatar = async (id: string, file: File) => {
     await dataInstance.deleteOldAvatar(id);

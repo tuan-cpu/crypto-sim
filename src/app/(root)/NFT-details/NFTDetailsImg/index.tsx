@@ -58,6 +58,7 @@ const NFTDetailsImg: React.FC<Props> = ({ nft }) => {
               width={700}
               height={800}
               style={{ objectFit: "cover" }}
+              priority
             />
           </div>
         </div>
@@ -70,7 +71,7 @@ const NFTDetailsImg: React.FC<Props> = ({ nft }) => {
         </div>
         {description && (
           <div className={Style.nftDetailsImg_box_description_box}>
-            <p>{nft?.description}</p>
+            <p>{nft?.metadata.description}</p>
           </div>
         )}
         <div

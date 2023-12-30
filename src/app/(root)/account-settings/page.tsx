@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 //INTERNAL IMPORT
 import Style from './Account.module.css';

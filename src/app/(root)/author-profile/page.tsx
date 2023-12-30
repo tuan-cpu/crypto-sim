@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 //INTERNAL IMPORT
 import Style from "./Author.module.css";
 import { Banner } from "../collection";
-import { Brand, Title } from "@/components";
+import { Brand, Category, Title } from "@/components";
 import images from "../../../img";
 import { AuthorNFTCardBox, AuthorProfileCard, AuthorTaps } from ".";
 import FollowerTabCard from "@/components/FollowerTab/FollowerTabCard";
@@ -44,7 +44,7 @@ const Author = () => {
   const [following, setFollowing] = useState(false);
   const [currentlyOwnedSim, setCurrentlyOwnedSim] = useState<any[]>([]);
 
-  const { ownedSim, tokenUri, fetchNFTImageFromIPFS } = useNFTContext();
+  const { ownedSim, tokenUri, fetchNFTImageFromIPFS, fetchNFTDataFromIPFS } = useNFTContext();
   const { wallet } = useConnectWalletContext();
   const { userInfo } = useDataContext();
   const bigIntArrayConverter = (array: any[]) => {
@@ -58,17 +58,15 @@ const Author = () => {
     let converted_array = bigIntArrayConverter(array);
     let result = {};
     for (let i = 0; i < converted_array.length; i++) {
+      const metadata = await fetchNFTDataFromIPFS(converted_array[i]);
       const uri = await tokenUri(converted_array[i]);
-      const response = await fetch(uri);
-      const metadata = await response.json();
-      const image = await fetchNFTImageFromIPFS(converted_array[i]);
+      const image = fetchNFTImageFromIPFS(metadata.image);
       result = {
         tokenId: converted_array[i],
         image: image,
         tokenURI: uri,
-        tokenName: metadata.name,
-        tokenDescription: metadata.description,
         escrow: wallet,
+        metadata: metadata
       };
       setCurrentlyOwnedSim((prev) => [...prev, result]);
     }

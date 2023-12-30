@@ -79,7 +79,7 @@ const NFTCard: React.FC<Props> = ({ element, index }) => {
             <span>{index + 2}</span>
           </div>
           <div className={Style.nftCard_box_price}>
-            <p>Mint Price: {element.metadata.mint_price} ETH</p>
+            <p>Price: {element.ethPrice} ETH</p>
           </div>
         </div>
       </div>

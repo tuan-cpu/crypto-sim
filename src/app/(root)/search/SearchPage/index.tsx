@@ -1,4 +1,4 @@
 import SearchBar from "./SearchBar";
+import NFTCard from "./NFTCard";
 
-
-export { SearchBar };
+export { SearchBar, NFTCard };

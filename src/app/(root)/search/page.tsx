@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 //INTERNAL IMPORT
 import Style from "./search.module.css";
 import { Slider, Brand, Filter } from "@/components";
-import { SearchBar } from "./SearchPage";
+import { SearchBar, NFTCard } from "./SearchPage";
 import { Banner, NFTCardTwo } from "../collection";
 import images from "../../../img";
 
@@ -12,7 +12,7 @@ import images from "../../../img";
 import { useNFTContext } from "@/context/NFTContext";
 
 const Search = () => {
-  const { fetchMarketItem } = useNFTContext();
+  const { fetchMarketItem, fetchAuctionItem } = useNFTContext();
   const [nfts, setNFTs] = useState<any[]>([]);
   const [nftsCopy, setNFTsCopy] = useState<any[]>([]);
 
@@ -48,7 +48,7 @@ const Search = () => {
       <Filter />
       <div className={Style.search_box}>
         {nfts.map((element, index) => (
-          <NFTCardTwo element={element} index={index} key={index + 1} />
+          <NFTCard element={element} index={index} key={index + 1} />
         ))}
       </div>
       <Slider />

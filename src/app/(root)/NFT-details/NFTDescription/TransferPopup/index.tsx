@@ -4,12 +4,16 @@ import { MdOutlineClose, MdOutlineDelete } from "react-icons/md";
 //INTERNAL IMPORT
 import Style from "./TransferPopup.module.css";
 import { Button } from "@/components";
+import { useNFTContext } from "@/context/NFTContext";
 interface Props{
     nftName: string,
+    tokenId: number,
+    owner: string,
     close: () => {}
 }
 
-const TransferPopup:React.FC<Props> = ({nftName, close}) => {
+const TransferPopup:React.FC<Props> = ({nftName, tokenId, owner, close}) => {
+  const { transferNFT } = useNFTContext();
   const [addressTo, setAddressTo] = useState("");
   return (
     <div className={Style.container} id="popupContainer">
@@ -25,7 +29,7 @@ const TransferPopup:React.FC<Props> = ({nftName, close}) => {
               <MdOutlineDelete onClick={() => setAddressTo("")}/>
             </div>
           </div>
-          <Button btnText="Transfer" handleClick={() => console.log(addressTo)} icon={undefined} classStyle={Style.button}/>
+          <Button btnText="Transfer" handleClick={async () => await transferNFT(owner, addressTo, tokenId)} icon={undefined} classStyle={Style.button}/>
         </div>
       </div>
     </div>

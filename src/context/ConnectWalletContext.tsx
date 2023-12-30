@@ -159,7 +159,7 @@ const ConnectWalletContextProvider: React.FC<
   };
 
   useEffect(() => {
-    async function fetchWallet() {
+    const fetchWallet= async() => {
       const { address, status } = await getCurrentWalletConnected();
       setWallet(address);
       setWalletStatus(status);

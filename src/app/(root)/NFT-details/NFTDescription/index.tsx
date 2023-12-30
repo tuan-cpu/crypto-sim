@@ -34,14 +34,13 @@ import NFTTabs from "../NFTTabs";
 
 interface Props {
   nft: {
-    image: string,
-    tokenURI: string,
-    tokenId: number,
-    name: string,
-    description: string,
-    seller: string,
-    escrow: string,
-    price: number,
+    image: string;
+    tokenURI: string;
+    tokenId: number;
+    seller: string;
+    escrow: string;
+    price: number;
+    metadata: any;
   };
 }
 
@@ -71,25 +70,17 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
     hour: 0,
     minute: 0,
   });
-  const provenanceArray = [
-    images.user6,
-    images.user7,
-    images.user8,
-    images.user9,
-  ];
   const [bidHistory, setBidHistory] = useState<any>([]);
   const [ownershipHistory, setOwnershipHistory] = useState<any>([]);
   useEffect(() => {
     let isMounted = true;
     const getHistory = async () => {
-      if (isMounted) {
-        const bid_history = await getBidHistoryOfAToken(nft.tokenId);
-        const ownership_history = await getOwnershipHistory(nft.tokenId);
-        setBidHistory(bid_history);
-        setOwnershipHistory(ownership_history);
-      }
+      const bid_history = await getBidHistoryOfAToken(nft.tokenId);
+      const ownership_history = await getOwnershipHistory(nft.tokenId);
+      setBidHistory(bid_history);
+      setOwnershipHistory(ownership_history);
     };
-    getHistory();
+    if (isMounted) getHistory();
     return () => {
       isMounted = false;
     };
@@ -101,7 +92,7 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
   const openTransfer = () => {
     setSocial(false);
     setTransfer(!transfer);
-  }
+  };
   const openTabs = (e: any) => {
     const inputText = e.target as HTMLElement;
     const btnText = inputText.innerText;
@@ -109,7 +100,6 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
       setHistory(true);
       setProvenance(false);
       setOwner(false);
-      console.log(bidHistory);
     } else if (btnText == "Provenance") {
       setHistory(false);
       setProvenance(true);
@@ -118,7 +108,6 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
       setHistory(false);
       setProvenance(false);
       setOwner(true);
-      console.log(ownershipHistory);
     }
   };
   const shortenAddress = (address: string) => {
@@ -133,7 +122,7 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
       <div className={Style.nftDescription_box}>
         {/* Part ONE */}
         <div className={Style.nftDescription_box_share}>
-          <p>Category</p>
+          <p>{nft?.metadata.category}</p>
           <div className={Style.nftDescription_box_share_box}>
             <MdCloudUpload
               className={Style.nftDescription_box_share_box_icon}
@@ -158,14 +147,22 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                 </Link>
               </div>
             )}
-            <BiTransferAlt className={Style.nftDescription_box_transfer} onClick={() => openTransfer()}/>
-            {
-              transfer && <TransferPopup nftName={nft.name} close={async () => openTransfer()}/>
-            }
+            <BiTransferAlt
+              className={Style.nftDescription_box_transfer}
+              onClick={() => openTransfer()}
+            />
+            {transfer && wallet == nft?.escrow && (
+              <TransferPopup
+                nftName={nft.metadata.name}
+                tokenId={nft.tokenId}
+                owner={wallet}
+                close={async () => openTransfer()}
+              />
+            )}
           </div>
         </div>
         <div className={Style.nftDescription_box_profile}>
-          <h1>{nft?.name}</h1>
+          <h1>{nft?.metadata.name}</h1>
           <div className={Style.nftDescription_box_profile_box}>
             <div className={Style.nftDescription_box_profile_box_left}>
               <Image
@@ -201,7 +198,7 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                 <small>Collection</small>
                 <br />
                 <span>
-                  CryptoSims <MdVerified />
+                  {nft?.metadata.collection} <MdVerified />
                 </span>
               </div>
             </div>
@@ -259,8 +256,8 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                 <span>[96 in stock]</span>
               </div>
               <div className={Style.nftDescription_box_profile_bidding_button}>
-                {wallet == nft?.seller.toLowerCase() ? (
-                  <p>You cannot buy your own NFT</p>
+                {wallet.toLowerCase() == nft?.seller.toLowerCase() ? (
+                  <p>You cannot bid your own NFT</p>
                 ) : (
                   <Button
                     btnText="Bid"
@@ -281,17 +278,36 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                     }
                   >
                     <small>Price</small>
-                    <p>
-                      {nft?.price} ETH <span>(≈ $2999.99)</span>
-                    </p>
+                    <p>{nft?.price} ETH</p>
                   </div>
                 </div>
               )}
               <div className={Style.nftDescription_box_profile_bidding_button}>
-                {wallet == nft?.seller ? (
-                  <p>You cannot buy/bid your own NFT</p>
+                {wallet.toLowerCase() == nft?.seller?.toLowerCase() ? (
+                  <p>You cannot buy your own NFT</p>
                 ) : (
-                  ""
+                  <div
+                    className={
+                      Style.nftDescription_box_profile_bidding_button_box
+                    }
+                  >
+                    {nft?.escrow == constant.MARKETPLACE_CONTRACT_ADDRESS && (
+                      <Button
+                        btnText="Buy NFT"
+                        handleClick={() => buyNFT(nft.tokenId, nft.price)}
+                        icon={<FaPercentage />}
+                        classStyle={Style.button}
+                      />
+                    )}
+                    {nft?.escrow == constant.AUCTION_CONTRACT_ADDRESS && (
+                      <Button
+                        btnText="Bid NFT"
+                        handleClick={() => buyNFT(nft.tokenId, nft.price)}
+                        icon={<FaPercentage />}
+                        classStyle={Style.button}
+                      />
+                    )}
+                  </div>
                 )}
                 {wallet == nft?.escrow ? (
                   <div
@@ -318,30 +334,7 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                       classStyle={Style.button}
                     />
                   </div>
-                ) : (
-                  <div
-                    className={
-                      Style.nftDescription_box_profile_bidding_button_box
-                    }
-                  >
-                    {nft?.escrow == constant.MARKETPLACE_CONTRACT_ADDRESS && (
-                      <Button
-                        btnText="Buy NFT"
-                        handleClick={() => buyNFT(nft.tokenId, nft.price)}
-                        icon={<FaPercentage />}
-                        classStyle={Style.button}
-                      />
-                    )}
-                    {nft?.escrow == constant.AUCTION_CONTRACT_ADDRESS && (
-                      <Button
-                        btnText="Bid NFT"
-                        handleClick={() => buyNFT(nft.tokenId, nft.price)}
-                        icon={<FaPercentage />}
-                        classStyle={Style.button}
-                      />
-                    )}
-                  </div>
-                )}
+                ) : ""}
               </div>
               {openPricing ? (
                 <div
@@ -479,25 +472,18 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                   Owner
                 </button>
               </div>
-              {bidHistory && (
+              {history && (
                 <div
                   className={Style.nftDescription_box_profile_bidding_box_card}
                 >
-                  <NFTTabs dataTab={bidHistory} type="auction"/>
+                  <NFTTabs dataTab={bidHistory}/>
                 </div>
               )}
-              {/* {provenance && (
+              {owner && (
                 <div
                   className={Style.nftDescription_box_profile_bidding_box_card}
                 >
-                  <NFTTabs dataTab={provenanceArray}/>
-                </div>
-              )} */}
-              {ownershipHistory && (
-                <div
-                  className={Style.nftDescription_box_profile_bidding_box_card}
-                >
-                  <NFTTabs dataTab={ownershipHistory} type="ownership"/>
+                  <NFTTabs dataTab={ownershipHistory}/>
                 </div>
               )}
             </div>
