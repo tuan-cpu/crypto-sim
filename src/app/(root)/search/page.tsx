@@ -17,10 +17,30 @@ const Search = () => {
   const [nftsCopy, setNFTsCopy] = useState<any[]>([]);
 
   useEffect(() => {
-    fetchMarketItem().then((item: any) => {
-      setNFTs(item.reverse());
-      setNFTsCopy(item);
-    });
+    const getMarketData = async () => {
+      try {
+        const marketItems = await fetchMarketItem();
+        const auctionItems = await fetchAuctionItem();
+  
+        const result = [
+          ...marketItems.map((item: any) => ({ item, type: 'market' })),
+          ...auctionItems.map((item: any) => ({ item, type: 'auction' })),
+        ];
+  
+        return result;
+      } catch (error) {
+        console.error('Error fetching market data:', error);
+        return [];
+      }
+    };
+  
+    const fetchData = async () => {
+      const response = await getMarketData();
+      setNFTs(response);
+      setNFTsCopy(response);
+    };
+  
+    fetchData();
   }, []);
   const onHandleSearch = (value: string) => {
     interface NFT {

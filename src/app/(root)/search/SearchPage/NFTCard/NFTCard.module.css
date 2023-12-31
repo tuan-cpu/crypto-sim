@@ -12,37 +12,26 @@
     box-shadow: var(--box-shadow);
 }
 
-.nftCard_box_like{
+.nftCard_box_timer{
     padding: 1rem;
     grid-column: 1/-1;
     grid-row: 1/-1;
     z-index: 1000;
 }
-.nftCard_box_like_box_box{
+.nftCard_box_timer_box{
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
-}
-.nftCard_box_like_box_box p{
-    display: inline-flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 1.2rem;
-    background-color: var(--icons-color);
-    color: var(--main-bg-color);
-    border-radius: 2rem;
-    padding: 0 .5rem;
-}
-.nftCard_box_like_box_box_icon{
-    color: var(--icons-color);
-    font-size: 2rem;
 }
 .nftCard_box_img{
     grid-column: 1/-1;
     grid-row: 1/-1;
+    display: grid;
 }
 .nftCard_box_img_img{
     border-radius: 1rem;
+    grid-column: 1/-1;
+    grid-row: 1/-1;
 }
 .nftCard_box_info{
     display: flex;
@@ -67,10 +56,16 @@
     line-height: 0;
     padding: 1rem;
 }
+.nftCard_box_bid{
+    display: flex;
+    flex-direction: column;
+    padding: 0 1rem;
+}
 .nftCard_box_price p{
     margin-bottom: 1rem;
 }
-
+.nftCard_box_timer {
+}
 /* @media screen and (min-device-width: 320px) and (max-device-width: 375px) {
     .nftCard{
         width: 80%;

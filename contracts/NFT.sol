@@ -10,9 +10,11 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 library UintAndByteConvert {
-    function bytesToUintArray(
-        bytes memory data
-    ) internal pure returns (uint256[] memory) {
+    function bytesToUintArray(bytes memory data)
+        internal
+        pure
+        returns (uint256[] memory)
+    {
         require(data.length % 32 == 0, "Invalid data length");
 
         uint256[] memory uintArray = new uint256[](data.length / 32);
@@ -28,9 +30,11 @@ library UintAndByteConvert {
         return uintArray;
     }
 
-    function combineUintArrayToUint32(
-        uint256[] memory values
-    ) internal pure returns (uint32) {
+    function combineUintArrayToUint32(uint256[] memory values)
+        internal
+        pure
+        returns (uint32)
+    {
         uint32 result = 0;
         result = (result << 2) | uint32(values[0]); // 2 bits for 0-3
         result = (result << 3) | uint32(values[1]); // 3 bits for 0-7
@@ -43,9 +47,11 @@ library UintAndByteConvert {
         return result;
     }
 
-    function splitUint32ToUintArray(
-        uint32 input
-    ) internal pure returns (uint256[7] memory values) {
+    function splitUint32ToUintArray(uint32 input)
+        internal
+        pure
+        returns (uint256[7] memory values)
+    {
         // Initialize the result array
         values = [uint256(0), 0, 0, 0, 0, 0, 0];
 
@@ -123,10 +129,11 @@ abstract contract CryptoSimBase {
         uint32 genes
     );
 
-    function generateSimGenes(
-        uint256 matronId,
-        uint256 sireId
-    ) internal view returns (uint32) {
+    function generateSimGenes(uint256 matronId, uint256 sireId)
+        internal
+        view
+        returns (uint32)
+    {
         SimAttributes memory matronAttr = decodeAttributes(
             sims[matronId].genes
         );
@@ -191,9 +198,16 @@ abstract contract CryptoSimBase {
         return encodeAttributes(attributes);
     }
 
-    function getSimDetails(
-        uint256 simId
-    ) external view returns (uint256, uint32, uint256, uint256) {
+    function getSimDetails(uint256 simId)
+        external
+        view
+        returns (
+            uint256,
+            uint32,
+            uint256,
+            uint256
+        )
+    {
         Sim storage sim = sims[simId];
         return (simId, sim.genes, sim.matronId, sim.sireId);
     }
@@ -212,15 +226,19 @@ abstract contract CryptoSimBase {
         );
     }
 
-    function getOwnershipHistory(
-        uint256 tokenId
-    ) external view returns (SimOwnership[] memory) {
+    function getOwnershipHistory(uint256 tokenId)
+        external
+        view
+        returns (SimOwnership[] memory)
+    {
         return simOwnership[tokenId];
     }
 
-    function encodeAttributes(
-        SimAttributes memory attributes
-    ) internal pure returns (uint32) {
+    function encodeAttributes(SimAttributes memory attributes)
+        internal
+        pure
+        returns (uint32)
+    {
         uint32 genes = 0;
         genes = UintAndByteConvert.combineUintArrayToUint32(
             UintAndByteConvert.bytesToUintArray(abi.encode(attributes))
@@ -228,9 +246,11 @@ abstract contract CryptoSimBase {
         return genes;
     }
 
-    function decodeAttributes(
-        uint32 genes
-    ) internal pure returns (SimAttributes memory) {
+    function decodeAttributes(uint32 genes)
+        internal
+        pure
+        returns (SimAttributes memory)
+    {
         SimAttributes memory attributes = SimAttributes({
             body: 0,
             eye: 0,
@@ -270,9 +290,9 @@ contract TheFunixCryptoSim is
         _;
     }
 
-    constructor(
-        string memory _initBaseURI
-    ) ERC721("TheFunixCryptoSims", "FCS") {
+    constructor(string memory _initBaseURI)
+        ERC721("TheFunixCryptoSims", "FCS")
+    {
         owner = payable(msg.sender);
         setBaseURI(_initBaseURI);
         createGenesis();
@@ -383,10 +403,11 @@ contract TheFunixCryptoSim is
         return createSim(0, (sims.length - 1) % sims.length, msg.sender);
     }
 
-    function breedSim(
-        uint256 matronId,
-        uint256 sireId
-    ) external payable returns (uint256) {
+    function breedSim(uint256 matronId, uint256 sireId)
+        external
+        payable
+        returns (uint256)
+    {
         require(msg.value == 0.05 ether);
         require(matronId != sireId, "2 sims must be different!");
         require(
@@ -417,6 +438,11 @@ contract TheFunixCryptoSim is
         }
     }
 
+    function transferSims(uint256 tokenId, address receiver) public {
+        require(ownerOf(tokenId) == msg.sender, "Not your sim!");
+        safeTransferFrom(msg.sender, receiver, tokenId);
+    }
+
     // The following functions are overrides required by Solidity.
 
     function _update(
@@ -427,22 +453,23 @@ contract TheFunixCryptoSim is
         return super._update(to, tokenId, auth);
     }
 
-    function _increaseBalance(
-        address account,
-        uint128 value
-    ) internal override(ERC721, ERC721Enumerable) {
+    function _increaseBalance(address account, uint128 value)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
         super._increaseBalance(account, value);
     }
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
         return super.tokenURI(tokenId);
     }
 
-    function supportsInterface(
-        bytes4 interfaceId
-    )
+    function supportsInterface(bytes4 interfaceId)
         public
         view
         override(ERC721, ERC721Enumerable, ERC721URIStorage)
@@ -571,7 +598,10 @@ contract NFTMarketplace is IERC721Receiver {
 
     function buyNFT(uint256 tokenId) public payable {
         Listing storage listing = listings[tokenId];
-        require(msg.value == listing.price, "You need to pay the price exactly!");
+        require(
+            msg.value == listing.price,
+            "You need to pay the price exactly!"
+        );
 
         listings[tokenId].escrow = payable(msg.sender);
         listings[tokenId].sold = true;
@@ -599,7 +629,7 @@ contract NFTMarketplace is IERC721Receiver {
         uint256 currentIndex = 0;
         Listing[] memory items = new Listing[](unSoldItemCount);
         TheFunixCryptoSim.Sim[] memory sims = nftContract.getAllSims();
-        for (uint i = 0; i < sims.length; i++) {
+        for (uint256 i = 0; i < sims.length; i++) {
             if (listings[i + 1].escrow == address(this)) {
                 uint256 currentId = i + 1;
                 Listing storage currentItem = listings[currentId];
@@ -657,6 +687,7 @@ contract NFTAuction is IERC721Receiver {
     }
 
     struct Auction {
+        uint256 tokenId;
         address seller;
         uint256 minBid;
         address highestBidder;
@@ -672,7 +703,7 @@ contract NFTAuction is IERC721Receiver {
 
     mapping(uint256 => Auction) auctions;
     mapping(uint256 => BidHistory[]) bidHistories;
-    uint256 [] auctionItemId;
+    uint256[] auctionItemId;
 
     function updateBaseContract(address _nftContract) public onlyOwner {
         nftContract = TheFunixCryptoSim(_nftContract);
@@ -689,6 +720,7 @@ contract NFTAuction is IERC721Receiver {
 
         // Create auction
         auctions[tokenId] = Auction(
+            tokenId,
             msg.sender,
             minBid,
             address(0),
@@ -722,8 +754,8 @@ contract NFTAuction is IERC721Receiver {
     function fetchAllAuctionItems() public view returns (Auction[] memory) {
         Auction[] memory items = new Auction[](auctionItemId.length);
         for (uint256 i = 0; i < auctionItemId.length; i++) {
-                Auction storage currentItem = auctions[auctionItemId[i]];
-                items[i] = currentItem;
+            Auction storage currentItem = auctions[auctionItemId[i]];
+            items[i] = currentItem;
         }
         return items;
     }
@@ -733,7 +765,10 @@ contract NFTAuction is IERC721Receiver {
             auctions[tokenId].seller == msg.sender,
             "You must be the seller to cancel this auction"
         );
-        require(block.timestamp < auctions[tokenId].endTimestamp, "Auction had ended!");
+        require(
+            block.timestamp < auctions[tokenId].endTimestamp,
+            "Auction had ended!"
+        );
         // Transfer NFT to to the seller
         nftContract.safeTransferFrom(address(this), msg.sender, tokenId);
 
@@ -745,7 +780,10 @@ contract NFTAuction is IERC721Receiver {
         Auction storage auction = auctions[tokenId];
         BidHistory[] storage bidHistory = bidHistories[tokenId];
         require(block.timestamp < auction.endTimestamp, "Auction had ended!");
-        require(msg.value > auction.highestBid, "Must bid higher than current value!");
+        require(
+            msg.value > auction.highestBid,
+            "Must bid higher than current value!"
+        );
 
         if (auction.highestBidder != address(0)) {
             // Refund previous bidder
@@ -758,31 +796,48 @@ contract NFTAuction is IERC721Receiver {
         bidHistory.push(BidHistory(msg.sender, msg.value, block.timestamp));
     }
 
-    function getBidHistoryOfAToken(
-        uint256 tokenId
-    ) external view returns (BidHistory[] memory) {
+    function getBidHistoryOfAToken(uint256 tokenId)
+        external
+        view
+        returns (BidHistory[] memory)
+    {
         return bidHistories[tokenId];
     }
 
-    function settleAuction(uint256 tokenId) external{
+    function settleAuction(uint256 tokenId) external {
         Auction storage auction = auctions[tokenId];
-        require(block.timestamp > auction.endTimestamp, "Auction time not ended yet!");
-        require(msg.sender == owner || msg.sender == auction.highestBidder || msg.sender == auction.seller, "You must be either seller/highest bidder/contract owner to settle this auction!");
+        require(
+            block.timestamp > auction.endTimestamp,
+            "Auction time not ended yet!"
+        );
+        require(
+            msg.sender == owner ||
+                msg.sender == auction.highestBidder ||
+                msg.sender == auction.seller,
+            "You must be either seller/highest bidder/contract owner to settle this auction!"
+        );
 
         // Transfer NFT to highest bidder
-        nftContract.safeTransferFrom(
-            address(this),
-            auction.highestBidder,
-            tokenId
-        );
-        nftContract.updateOwnershipHistory(
-            tokenId,
-            auction.highestBid,
-            auction.highestBidder
-        );
-
-        // Pay seller
-        payable(auction.seller).transfer(auction.highestBid);
+        if (auction.highestBid != 0) {
+            nftContract.safeTransferFrom(
+                address(this),
+                auction.highestBidder,
+                tokenId
+            );
+            nftContract.updateOwnershipHistory(
+                tokenId,
+                auction.highestBid,
+                auction.highestBidder
+            );
+            // Pay seller
+            payable(auction.seller).transfer(auction.highestBid);
+        } else {
+            nftContract.safeTransferFrom(
+                address(this),
+                auction.seller,
+                tokenId
+            );
+        }
 
         // Delete auction
         delete auctions[tokenId];

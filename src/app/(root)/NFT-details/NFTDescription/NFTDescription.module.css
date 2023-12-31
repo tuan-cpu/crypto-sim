@@ -148,9 +148,11 @@
     color: red;
     font-size: 1rem;
 }
+.nftDescription_box_profile_bidding_button{
+    padding: 1rem 0;
+}
 .nftDescription_box_profile_bidding_button_box{
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     gap: 1rem;
     padding-top: 1rem;
@@ -195,7 +197,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: .5rem 1rem;
+    padding: 0 1rem;
     border: 1px solid var(--icons-color);
     border-radius: 5rem;
     margin: .5rem 0;
@@ -212,7 +214,7 @@
     margin: .5rem 0;
 }
 .nftDescription_box_profile_bidding_pricing input{
-    font-size: 2rem;
+    font-size: 1.5rem;
     background-color: transparent;
     border: none;
     outline: none;

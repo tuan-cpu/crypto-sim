@@ -8,7 +8,7 @@ import React, {
 import { ethers } from "ethers";
 import axios from "axios";
 import FormData from "form-data";
-import Web3Modal from 'web3modal';
+import Web3Modal from "web3modal";
 
 //Internal import
 import contract_FCS from "../../artifacts/contracts/NFT.sol/TheFunixCryptoSim.json";
@@ -48,28 +48,35 @@ type NFTContextType = {
   transferNFT: any;
   fetchAuctionItem: any;
 };
-const connectContract = async () => {
-  const web3Modal = new Web3Modal()
-  const connection = await web3Modal.connect()
-  const provider = new ethers.providers.Web3Provider(connection)
+
+const connectContract = async (type: string) => {
+  const web3Modal = new Web3Modal();
+  const connection = await web3Modal.connect();
+  const provider = new ethers.providers.Web3Provider(connection);
   const signer = provider.getSigner();
-  const nftContract = new ethers.Contract(
-    FCS_CONTRACT_ADDRESS,
-    contract_FCS.abi,
-    signer
-  );
-  const auctionContract = new ethers.Contract(
-    AUCTION_CONTRACT_ADDRESS,
-    contract_auction.abi,
-    signer
-  );
-  const marketContract = new ethers.Contract(
-    MARKETPLACE_CONTRACT_ADDRESS,
-    contract_marketplace.abi,
-    signer
-  )
-  return { nftContract, auctionContract, marketContract };
-}
+  if(type == 'nft'){
+    const nftContract = new ethers.Contract(
+      FCS_CONTRACT_ADDRESS,
+      contract_FCS.abi,
+      signer
+    );
+    return nftContract;
+  } else if(type == 'auction') {
+    const auctionContract = new ethers.Contract(
+      AUCTION_CONTRACT_ADDRESS,
+      contract_auction.abi,
+      signer
+    );
+    return auctionContract;
+  } else {
+    const marketContract = new ethers.Contract(
+      MARKETPLACE_CONTRACT_ADDRESS,
+      contract_marketplace.abi,
+      signer
+    );
+    return marketContract;
+  }
+};
 
 // Create a context with an initial state
 const NFTContext = createContext<NFTContextType | undefined>(undefined);
@@ -82,18 +89,6 @@ type NFTContextProviderProps = {
 const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
   children,
 }) => {
-  const [nftContract, setNFTContract] = useState<any>();
-  const [auctionContract, setAuctionContract] = useState<any>();
-  const [marketContract, setMarketContract] = useState<any>();
-  useEffect(()=> {
-    const getContractAddress = async() =>{
-      const { nftContract: nft, auctionContract: auction, marketContract: market } = await connectContract();
-      setNFTContract(nft);
-      setAuctionContract(auction);
-      setMarketContract(market);
-    }
-    getContractAddress();
-  },[])
   const pinFileToIPFS = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -223,27 +218,36 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
 
   //NFT CREATE
   const buySim = async () => {
+    const nftContract = await connectContract('nft');
     return await nftContract.buySim({ value: ethToWei("0.02") });
   };
   const breedSim = async (matronId: number, sireId: number) => {
-    return await nftContract.breedSim(matronId, sireId, { value: ethToWei("0.05") });
+    const nftContract = await connectContract('nft');
+    return await nftContract.breedSim(matronId, sireId, {
+      value: ethToWei("0.05"),
+    });
   };
   const ownedSim = async () => {
+    const nftContract = await connectContract('nft');
     return await nftContract.ownedSims();
   };
   const ownerOf = async (tokenId: number) => {
+    const nftContract = await connectContract('nft');
     return await nftContract.ownerOf(tokenId);
   };
   const tokenUri = async (tokenId: number) => {
+    const nftContract = await connectContract('nft');
     return await nftContract.tokenURI(tokenId);
   };
-  const transferNFT = async (from: string, to: string, tokenId: number) => {
-    await nftContract.safeTransferFrom(from, to, tokenId);
-  }
-  const getOwnershipHistory = async(tokenId: number) => {
+  const transferNFT = async (receiver: string, tokenId: number) => {
+    const nftContract = await connectContract('nft');
+    await nftContract.transferSims(tokenId, receiver);
+  };
+  const getOwnershipHistory = async (tokenId: number) => {
+    const nftContract = await connectContract('nft');
     const response = await nftContract.getOwnershipHistory(tokenId);
     const result = [];
-    for(let i=0; i<response.length; i++){
+    for (let i = 0; i < response.length; i++) {
       const owner = response[i].owner.toLowerCase();
       const price = Number(BigInt(response[i].price)).toString();
       const timestamp = Number(BigInt(response[i].timestamp));
@@ -252,19 +256,22 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
         wallet: owner,
         amount: weiToEth(price),
         timestamp: timestamp,
-        image: image
-      })
+        image: image,
+      });
     }
     return result;
   };
 
   //MARKETPLACE
   const getListingPrice = async () => {
+    const marketContract = await connectContract('market');
     return await marketContract.getListingPrice();
   };
   const listNFT = async (tokenId: number, price: number) => {
+    const nftContract = await connectContract('nft');
+    const marketContract = await connectContract('market');
     const weiPrice = ethToWei(price.toString());
-    const listingFee = ethers.utils.parseEther('0.025');
+    const listingFee = ethers.utils.parseEther("0.025");
     const sentValue = weiPrice.add(listingFee);
     await nftContract.approve(marketContract.address, tokenId);
     return await marketContract.listNFT(tokenId, weiPrice, {
@@ -272,9 +279,11 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     });
   };
   const cancelListNFT = async (tokenId: number) => {
+    const marketContract = await connectContract('market');
     return await marketContract.cancelListNFT(tokenId);
   };
   const reListNFT = async (tokenId: number, price: string) => {
+    const marketContract = await connectContract('market');
     const weiPrice = ethToWei(price);
     const listingPrice = await getListingPrice();
     return await marketContract.reListNFT(tokenId, weiPrice, {
@@ -282,13 +291,16 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     });
   };
   const buyNFT = async (tokenId: number, price: string) => {
+    const marketContract = await connectContract('market');
     const weiPrice = ethToWei(price);
     return await marketContract.buyNFT(tokenId, { value: weiPrice });
   };
 
   const fetchMarketItem = async () => {
-    const data = await marketContract?.fetchMarketItem();
-    if(data){
+    const nftContract = await connectContract('nft');
+    const marketContract = await connectContract('market');
+    const data = await marketContract.fetchMarketItem();
+    if (data) {
       const items = await Promise.all(
         data.map(
           async (item: {
@@ -312,7 +324,7 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
               escrow,
               image,
               tokenURI,
-              metadata
+              metadata,
             };
           }
         )
@@ -322,6 +334,8 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     return [];
   };
   const fetchListedItem = async (type: string) => {
+    const nftContract = await connectContract('nft');
+    const marketContract = await connectContract('market');
     try {
       const data =
         type == "fetchListedItems"
@@ -350,7 +364,7 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
               escrow,
               image,
               tokenURI,
-              metadata
+              metadata,
             };
           }
         )
@@ -367,25 +381,31 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     price: string,
     duration: number
   ) => {
+    const nftContract = await connectContract('nft');
+    const auctionContract = await connectContract('auction');
     await nftContract.approve(auctionContract.address, tokenId);
     const weiPrice = ethToWei(price);
     await auctionContract.createAuction(tokenId, weiPrice, duration, {
-      value: ethers.utils.parseEther('0.025'),
+      value: ethers.utils.parseEther("0.025"),
     });
   };
-  const bid = async (tokenId: number, price: string) => {
-    return await auctionContract.bid(tokenId, { value: ethToWei(price) });
+  const bid = async (tokenId: number, price: number) => {
+    const auctionContract = await connectContract('auction');
+    return await auctionContract.bid(tokenId, { value: ethToWei(price.toString()) });
   };
   const getHighestBidderOfAnAuction = async (tokenId: number) => {
+    const auctionContract = await connectContract('auction');
     return await auctionContract.getHighestBidderOfAnAuction(tokenId);
   };
   const settleAuction = async (tokenId: number) => {
+    const auctionContract = await connectContract('auction');
     return await auctionContract.settleAuction(tokenId);
   };
   const getBidHistoryOfAToken = async (tokenId: number) => {
+    const auctionContract = await connectContract('auction');
     const response = await auctionContract.getBidHistoryOfAToken(tokenId);
     const result = [];
-    for(let i=0; i<response.length; i++){
+    for (let i = 0; i < response.length; i++) {
       const owner = response[i].bidder.toLowerCase();
       const price = Number(BigInt(response[i].bid)).toString();
       const timestamp = Number(BigInt(response[i].timestamp));
@@ -394,16 +414,53 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
         wallet: owner,
         amount: weiToEth(price),
         timestamp: timestamp,
-        image: image
-      })
+        image: image,
+      });
     }
     return result;
-  }
+  };
   const fetchAuctionItem = async () => {
+    const nftContract = await connectContract('nft');
+    const auctionContract = await connectContract('auction');
     const data = await auctionContract.fetchAllAuctionItems();
-    console.log(data);
-    return data;
-  }
+    if (data) {
+      const items = await Promise.all(
+        data.map(
+          async (item: {
+            tokenId: number;
+            seller: string;
+            minBid: string;
+            highestBid: string;
+            highestBidder: string;
+            endTimestamp: number;
+          }) => {
+            const tokenId = Number(BigInt(item.tokenId));
+            const seller = item.seller;
+            const metadata = await fetchNFTDataFromIPFS(tokenId);
+            const tokenURI = await nftContract.tokenURI(tokenId);
+            const image = fetchNFTImageFromIPFS(metadata.image);
+            const minBid = weiToEth(item.minBid);
+            const highestBid = weiToEth(item.highestBid);
+            const highestBidder = item.highestBidder;
+            const endTimestamp = Number(BigInt(item.endTimestamp));
+            return {
+              minBid,
+              highestBid,
+              highestBidder,
+              tokenId,
+              seller,
+              image,
+              tokenURI,
+              metadata,
+              endTimestamp
+            };
+          }
+        )
+      );
+      return items;
+    }
+    return [];
+  };
 
   //SUPPORT FUNCTIONS
   const ethToWei = (price: string) => {
@@ -420,11 +477,13 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     return "https://gateway.pinata.cloud/ipfs/" + cid + "/" + image;
   };
   const fetchNFTDataFromIPFS = async (tokenId: number) => {
-    const uri = `https://gateway.pinata.cloud/ipfs/QmVfscF5ykRAoWR629sUVsit2UFH6f7cqoTwjS5PppPfZB/${tokenId+1}.json`;
+    const uri = `https://gateway.pinata.cloud/ipfs/QmVfscF5ykRAoWR629sUVsit2UFH6f7cqoTwjS5PppPfZB/${
+      tokenId + 1
+    }.json`;
     const response = await fetch(uri);
     const metadata = await response.json();
     return metadata;
-  }
+  };
   const fetchNFTImageFromIPFS = (ipfsImage: string) => {
     const [cid, image] = extractCIDandImage(ipfsImage);
     return constructGateway(cid, image);
@@ -456,7 +515,7 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
         getOwnershipHistory,
         getBidHistoryOfAToken,
         weiToEth,
-        fetchAuctionItem
+        fetchAuctionItem,
       }}
     >
       {children}
