@@ -238,7 +238,7 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                       <Button
                         btnText="Confirm"
                         handleClick={() => {
-                          if(price == 0) openBiddingBox();
+                          if (price == 0) openBiddingBox();
                           else bid(nft?.tokenId, price);
                         }}
                         icon={undefined}
@@ -286,36 +286,18 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
             </div>
           ) : (
             <div className={Style.nftDescription_box_profile_bidding}>
-              {nft?.price != 0 && (
-                <div className={Style.nftDescription_box_profile_bidding_price}>
-                  <div
-                    className={
-                      Style.nftDescription_box_profile_bidding_price_bid
-                    }
-                  >
-                    <small>Price</small>
-                    <p>{nft?.price} ETH</p>
-                  </div>
+              <div className={Style.nftDescription_box_profile_bidding_price}>
+                <div
+                  className={Style.nftDescription_box_profile_bidding_price_bid}
+                >
+                  <small>Price</small>
+                  <p>
+                    {nft.price > 0 ? nft.price : nft.metadata.mint_price} ETH
+                  </p>
                 </div>
-              )}
+              </div>
               <div className={Style.nftDescription_box_profile_bidding_button}>
-                {wallet.toLowerCase() == nft?.seller?.toLowerCase() ? (
-                  <p>You cannot buy your own NFT</p>
-                ) : (
-                  <div
-                    className={
-                      Style.nftDescription_box_profile_bidding_button_box
-                    }
-                  >
-                    <Button
-                      btnText="Buy NFT"
-                      handleClick={() => buyNFT(nft.tokenId, nft.price)}
-                      icon={<FaPercentage />}
-                      classStyle={Style.button}
-                    />
-                  </div>
-                )}
-                {wallet == nft?.escrow ? (
+                {wallet.toLowerCase() == nft?.escrow.toLowerCase() ? (
                   <div
                     className={
                       Style.nftDescription_box_profile_bidding_button_box
@@ -341,7 +323,24 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                     />
                   </div>
                 ) : (
-                  ""
+                  <>
+                    {wallet.toLowerCase() == nft?.seller?.toLowerCase() ? (
+                      <p>You cannot buy your own NFT</p>
+                    ) : (
+                      <div
+                        className={
+                          Style.nftDescription_box_profile_bidding_button_box
+                        }
+                      >
+                        <Button
+                          btnText="Buy NFT"
+                          handleClick={() => buyNFT(nft.tokenId, nft.price)}
+                          icon={<FaPercentage />}
+                          classStyle={Style.button}
+                        />
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
               {openPricing ? (

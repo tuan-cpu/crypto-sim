@@ -72,19 +72,16 @@ const NFTCard: React.FC<Props> = ({ element, index }) => {
           </div>
           <div className={Style.nftCard_box_info}>
             <div className={Style.nftCard_box_info_left}>
-              <LikeProfile />
               <p>{element.item.metadata.name}</p>
             </div>
-            <span>{index + 2}</span>
           </div>
           {element.type == "market" ? (
             <div className={Style.nftCard_box_price}>
               <p>Price: {element.item.ethPrice} ETH</p>
             </div>
           ) : (
-            <div className={Style.nftCard_box_bid}>
-              <p>Min Bid: {element.item.minBid} ETH</p>
-              <p>Current Highest Bid: {element.item.highestBid} ETH</p>
+            <div className={Style.nftCard_box_price}>
+              <p>Current Bid: {Number(element.item.highestBid) > 0 ? Number(element.item.highestBid) : Number(element.item.minBid)} ETH</p>
             </div>
           )}
         </div>

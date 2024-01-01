@@ -3,6 +3,7 @@ import React from "react";
 
 //INTERNAL IMPORT
 import Style from "./Home.module.css";
+import images from '../../img';
 import {
   HeroSection,
   Service,
@@ -21,6 +22,17 @@ import {
 } from "@/components";
 
 const Home = () => {
+  const featuredArray = [
+    images.nft_image_1,
+    images.nft_image_2,
+    images.nft_image_3,
+    images.nft_image_1,
+    images.nft_image_2,
+    images.nft_image_3,
+    images.nft_image_1,
+    images.nft_image_2,
+    images.nft_image_3,
+  ];
   return (
     <main>
       <div className={Style.homePage}>
@@ -41,7 +53,7 @@ const Home = () => {
           paragraph="Discover the most outstanding NFTs in all topics of life."
         />
         <Filter/>
-        <NFTCard/>
+        {/* <NFTCard nftArray={featuredArray}/> */}
         <Title
           heading="Browse by Category"
           paragraph="Explore the NFTs in the most featured categories"

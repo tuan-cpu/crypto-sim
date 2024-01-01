@@ -5,27 +5,19 @@ import Image from "next/image";
 
 //INTERNAL IMPORT
 import Style from "./NFTCard.module.css";
-import images from "../../img";
 
-const NFTCard = () => {
-  const featuredArray = [
-    images.nft_image_1,
-    images.nft_image_2,
-    images.nft_image_3,
-    images.nft_image_1,
-    images.nft_image_2,
-    images.nft_image_3,
-    images.nft_image_1,
-    images.nft_image_2,
-    images.nft_image_3,
-  ];
+interface Props{
+  nftArray: any[];
+}
+
+const NFTCard:React.FC<Props> = ({nftArray}) => {
   const [like, setLike] = useState(true);
   const likeNFT = () => {
     setLike(!like);
   };
   return (
     <div className={Style.nftCard}>
-      {featuredArray.map((element, index) => (
+      {nftArray.map((element, index) => (
         <div key={index + 1} className={Style.nftCard_box}>
           <div className={Style.nftCard_box_img}>
             <Image

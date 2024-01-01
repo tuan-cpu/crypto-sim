@@ -43,24 +43,24 @@ const Profile = () => {
             <Link href={{ pathname: "/author-profile" }}>My Profile</Link>
           </p>
         </div>
-        <div className={Style.profile_menu_item}>
+        {/* <div className={Style.profile_menu_item}>
           <FaRegImage />
           <p>
             <Link href={{ pathname: "/my-items" }}>My Items</Link>
           </p>
-        </div>
+        </div> */}
         <div className={Style.profile_menu_item}>
           <FaUserEdit />
           <p>
             <Link href={{ pathname: "/account-settings" }}>Edit Profile</Link>
           </p>
         </div>
-        <div className={Style.profile_menu_item}>
+        {/* <div className={Style.profile_menu_item}>
           <MdHelpCenter />
           <p>
             <Link href={{ pathname: "/help" }}>Help</Link>
           </p>
-        </div>
+        </div> */}
         <div className={Style.profile_menu_item}>
           <TbDownload />
           <p>

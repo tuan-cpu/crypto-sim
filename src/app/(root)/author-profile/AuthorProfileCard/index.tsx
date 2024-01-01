@@ -127,7 +127,7 @@ const AuthorProfileCard: React.FC<Props> = ({ wallet, userData }) => {
         </div>
         <div className={Style.authorProfileCard_box_info}>
           <h2>
-            {userData.username || "Unknown"}
+            {userData.username || "Unnamed"}
             {""}
             <span>
               <MdVerified />

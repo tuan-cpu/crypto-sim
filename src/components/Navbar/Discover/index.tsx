@@ -11,10 +11,10 @@ interface Props {
 const Discover:React.FC<Props> = ({close}) => {
   //----------DISCOVER NAVIGATION MENU
   const discover = [
-    {
-      name: "Collection",
-      link: "collection",
-    },
+    // {
+    //   name: "Collection",
+    //   link: "collection",
+    // },
     {
       name: "Search",
       link: "search",
@@ -39,10 +39,10 @@ const Discover:React.FC<Props> = ({close}) => {
     //   name: "Blog",
     //   link: "blog",
     // },
-    {
-      name: "Upload NFT",
-      link: "upload-nft"
-    }
+    // {
+    //   name: "Upload NFT",
+    //   link: "upload-nft"
+    // }
   ];
   return (
     <div>
