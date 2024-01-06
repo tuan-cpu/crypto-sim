@@ -21,7 +21,7 @@ import { Button } from "..";
 //IMPORT FROM SMART CONTRACT
 import { useConnectWalletContext } from "@/context/ConnectWalletContext";
 import { useDataContext } from "@/context/DataContext";
-import { getUserProfile } from "@/lib/actions/users.actions";
+import { getUserProfile, getUserNotifications } from "@/lib/actions/users.actions";
 
 const Navbar = () => {
   const router = useRouter();
@@ -78,7 +78,7 @@ const Navbar = () => {
 
   //SMART CONTRACT SECTION
   const { wallet, connectWalletPressed } = useConnectWalletContext();
-  const { setUserInfo, userInfo } = useDataContext();
+  const { setUserInfo, userInfo, setUserNotifications } = useDataContext();
   useEffect(() => {
     const fetchUserData = async () => {
       const response = await getUserProfile(wallet);
@@ -96,7 +96,14 @@ const Navbar = () => {
           youtube: response.youtube,
         });
     };
-    if (wallet) fetchUserData();
+    const fetchUserNotifications = async () => {
+      const response = await getUserNotifications(wallet);
+      if(response) setUserNotifications(response);
+    }
+    if (wallet){
+      fetchUserData();
+      fetchUserNotifications();
+    }
   }, [wallet]);
 
   return (
@@ -111,12 +118,6 @@ const Navbar = () => {
               height={100}
             />
           </div>
-          {/* <div className={Style.navbar_container_left_box_input}>
-            <div className={Style.navbar_container_left_box_input_box}>
-              <input type="text" placeholder="Search NFT" />
-              <BsSearch onClick={() => {}} className={Style.search_icon} />
-            </div>
-          </div> */}
         </div>
 
         {/* // END OF LEFT SECTION */}

@@ -37,6 +37,7 @@ type NFTContextType = {
   fetchMarketItem: any;
   fetchListedItem: any;
   createAuction: any;
+  cancelAuction: any;
   bid: any;
   settleAuction: any;
   getHighestBidderOfAnAuction: any;
@@ -389,6 +390,10 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
       value: ethers.utils.parseEther("0.025"),
     });
   };
+  const cancelAuction = async (tokenId: number) => {
+    const auctionContract = await connectContract('auction');
+    return await auctionContract.cancelAuction(tokenId);
+  }
   const bid = async (tokenId: number, price: number) => {
     const auctionContract = await connectContract('auction');
     return await auctionContract.bid(tokenId, { value: ethToWei(price.toString()) });
@@ -507,6 +512,7 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
         fetchMarketItem,
         fetchListedItem,
         createAuction,
+        cancelAuction,
         bid,
         settleAuction,
         getHighestBidderOfAnAuction,

@@ -21,10 +21,11 @@ const Search = () => {
       try {
         const marketItems = await fetchMarketItem();
         const auctionItems = await fetchAuctionItem();
-  
+        const modifiedAuctionItems = auctionItems.filter((item: any) => item.seller !== "0x0000000000000000000000000000000000000000");
+
         const result = [
           ...marketItems.map((item: any) => ({ item, type: 'market' })),
-          ...auctionItems.map((item: any) => ({ item, type: 'auction' })),
+          ...modifiedAuctionItems.map((item: any) => ({ item, type: 'auction' })),
         ];
         return result;
       } catch (error) {

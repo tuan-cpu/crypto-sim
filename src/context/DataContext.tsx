@@ -10,7 +10,9 @@ import React, {
 // Define the type for your context
 type DataContextType = {
     userInfo: UserInfo,
-    setUserInfo: Dispatch<SetStateAction<UserInfo>>
+    setUserInfo: Dispatch<SetStateAction<UserInfo>>,
+    userNotifications: UserNotification[],
+    setUserNotifications: Dispatch<SetStateAction<UserNotification[]>>,
 };
 
 // Create a context with an initial state
@@ -32,6 +34,10 @@ interface UserInfo {
   linkedin: string;
   youtube: string;
 }
+type UserNotification = {
+  message: string,
+  timestamp: number
+}
 const DataContextProvider: React.FC<DataContextProviderProps> = ({
   children,
 }) => {
@@ -47,7 +53,8 @@ const DataContextProvider: React.FC<DataContextProviderProps> = ({
     linkedin: "",
     youtube: "",
   });
-  return <DataContext.Provider value={{ userInfo, setUserInfo }}>{children}</DataContext.Provider>;
+  const [userNotifications, setUserNotifications] = useState<UserNotification[]>([]);
+  return <DataContext.Provider value={{ userInfo, setUserInfo, userNotifications, setUserNotifications }}>{children}</DataContext.Provider>;
 };
 
 // Create a custom hook to use the context

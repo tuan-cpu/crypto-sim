@@ -35,4 +35,23 @@ const updateAvatar = async (id: string, url: string) => {
     window.location.reload();
 }
 
-export { updateUserProfile, uploadAvatar, updateAvatar, getUserProfile, getUserImage };
+const getUserNotifications = async (id: string) => {
+    const response = await dataInstance.getUserNotifications(id);
+    let result = [];
+    if(response) {
+        for(let i=0; i<response.notice.length; i++) {
+            result.push({
+                message: response.notice[i].message,
+                timestamp: response.notice[i].timestamp
+            })
+        }
+        return result.reverse();
+    }
+    else return null;
+}
+
+const setNewNotifications = async (id: string, newNotice: {message: string, timestamp: number}) => {
+    await dataInstance.setNewNotification(id, newNotice);
+}
+
+export { updateUserProfile, uploadAvatar, updateAvatar, getUserProfile, getUserImage, getUserNotifications, setNewNotifications };

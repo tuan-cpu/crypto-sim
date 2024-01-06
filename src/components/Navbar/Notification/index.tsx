@@ -1,29 +1,38 @@
-import React from 'react';
-import Image from 'next/image';
+import React from "react";
+import Image from "next/image";
 
 //INTERNAL IMPORT
-import Style from './Notification.module.css';
-import images from "../../../img";
+import Style from "./Notification.module.css";
+import { useDataContext } from "@/context/DataContext";
 
 const Notification = () => {
+  const { userInfo, userNotifications } = useDataContext();
   return (
     <div className={Style.notification}>
       <p>Notification</p>
-      <div className={Style.notification_box}>
-        <div className={Style.notification_box_details}>
-        <div className={Style.notification_box_img}>
-          <Image src={images.user1} alt='profile-image' width={50} height={50} style={{borderRadius: 25}}/>
+      {userNotifications?.map((item, index) => (
+        <div className={Style.notification_box} key={index}>
+          <div className={Style.notification_box_details}>
+            <div className={Style.notification_box_img}>
+              <Image
+                src={userInfo.image}
+                alt="profile-image"
+                width={50}
+                height={50}
+                style={{ borderRadius: 25 }}
+              />
+            </div>
+            <div className={Style.notification_box_info}>
+              <h4>{userInfo.username}</h4>
+              <p>{item.message}</p>
+              <small>{new Date(item.timestamp).toLocaleString()}</small>
+            </div>
+          </div>
+          <span className={Style.notification_box_new}></span>
         </div>
-        <div className={Style.notification_box_info}>
-          <h4>Tuan Le</h4>
-          <p>Measure action your user ...</p>
-          <small>3 minutes ago</small>
-        </div>
-        </div>
-        <span className={Style.notification_box_new}></span>
-      </div>
+      ))}
     </div>
-  )
-}
+  );
+};
 
-export default Notification
+export default Notification;

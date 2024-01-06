@@ -37,7 +37,7 @@ const Home = () => {
     <main>
       <div className={Style.homePage}>
         <HeroSection />
-        <Service />
+        {/* <Service />
         <BigNFTSlider />
         <Title
           heading="Audio Collection"
@@ -54,13 +54,13 @@ const Home = () => {
         />
         <Filter/>
         {/* <NFTCard nftArray={featuredArray}/> */}
-        <Title
+        {/* <Title
           heading="Browse by Category"
           paragraph="Explore the NFTs in the most featured categories"
         />
         <Category />
         <Subscribe />
-        <Brand/>
+        <Brand/>  */}
       </div>
     </main>
   );

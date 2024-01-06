@@ -122,6 +122,28 @@ class UserModel {
     await uploadBytesResumable(storageRef, file);
     return await getDownloadURL(storageRef);
   }
+  async getUserNotifications(id: string) {
+    const docRef = doc(collection(db, "notifications"), id);
+    const docSnap = await getDoc(docRef);
+    if(docSnap.exists()) return docSnap.data();
+    else{
+      console.log("Document doesn't exist.");
+      return null;
+    }
+  }
+  async setNewNotification(id: string, newNotice: {message: string, timestamp: number}) {
+    const docRef = doc(collection(db, "notifications"), id);
+    const docSnap = await getDoc(docRef);
+    if(docSnap.exists()) {
+      await updateDoc(docRef, {
+        notice: arrayUnion(newNotice)
+      })
+    } else {
+      await setDoc(docRef, {
+        notice: [newNotice]
+      })
+    }
+  }
 }
 
 export default UserModel;

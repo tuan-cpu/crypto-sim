@@ -20,6 +20,7 @@
 .notification_box{
     display: flex;
     align-items: flex-start;
+    justify-content: space-between;
     gap: 1rem;
     padding: .5rem;
     transition: all .3s ease-in;
@@ -43,8 +44,7 @@
 }
 
 .notification_box_info p{
-    font-size: 15px;
-    line-height: .5;
+    font-size: 12px;
     position: relative;
 }
 
