@@ -701,7 +701,7 @@ contract NFTAuction is IERC721Receiver {
 
     mapping(uint256 => Auction) auctions;
     mapping(uint256 => BidHistory[]) bidHistories;
-    uint256[] auctionItemId;
+    uint256 numberOfAuctionItems;
 
     function updateBaseContract(address _nftContract) public onlyOwner {
         nftContract = TheFunixCryptoSim(_nftContract);
@@ -725,7 +725,7 @@ contract NFTAuction is IERC721Receiver {
             0,
             block.timestamp + duration
         );
-        auctionItemId.push(tokenId);
+        numberOfAuctionItems += 1;
     }
 
     function fetchAuctionItemOfUser() public view returns (Auction[] memory) {
@@ -750,10 +750,16 @@ contract NFTAuction is IERC721Receiver {
     }
 
     function fetchAllAuctionItems() public view returns (Auction[] memory) {
-        Auction[] memory items = new Auction[](auctionItemId.length);
-        for (uint256 i = 0; i < auctionItemId.length; i++) {
-            Auction storage currentItem = auctions[auctionItemId[i]];
-            items[i] = currentItem;
+        uint256 currentIndex = 0;
+        Auction[] memory items = new Auction[](numberOfAuctionItems);
+        TheFunixCryptoSim.Sim[] memory sims = nftContract.getAllSims();
+        for (uint256 i = 0; i < sims.length; i++) {
+            if (auctions[i + 1].endTimestamp >= block.timestamp) {
+                uint256 currentId = i + 1;
+                Auction storage currentItem = auctions[currentId];
+                items[currentIndex] = currentItem;
+                currentIndex += 1;
+            }
         }
         return items;
     }
@@ -772,6 +778,7 @@ contract NFTAuction is IERC721Receiver {
 
         // delete auction
         delete auctions[tokenId];
+        numberOfAuctionItems -= 1;
     }
 
     function bid(uint256 tokenId) external payable {
@@ -839,9 +846,11 @@ contract NFTAuction is IERC721Receiver {
 
         // Delete auction
         delete auctions[tokenId];
+        numberOfAuctionItems -= 1;
     }
 
     function withdraw() public onlyOwner {
         payable(owner).transfer(address(this).balance);
     }
 }
+

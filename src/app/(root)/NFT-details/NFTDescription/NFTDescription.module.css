@@ -184,7 +184,7 @@
 }
 .button, .button_confirm{
     font-size: 1rem;
-    padding: 1rem 1.2rem;
+    /* padding: 1rem 1.2rem; */
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -192,8 +192,8 @@
 .button_confirm{
     float: right;
 }
-.nftDescription_box_profile_bidding_pricing{
-    width: 100%;
+.nftDescription_box_profile_bidding_box_pricing{
+    width: 90%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -213,7 +213,13 @@
     border-radius: 5rem;
     margin: .5rem 0;
 }
-.nftDescription_box_profile_bidding_pricing input{
+.nftDescription_box_profile_bidding_box {
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    ;
+}
+.nftDescription_box_profile_bidding_box_pricing input{
     font-size: 1.5rem;
     background-color: transparent;
     border: none;
@@ -263,7 +269,7 @@
     .nftDescription_box_profile_bidding_price_bid p{
         font-size: 1rem;
     }
-    .nftDescription_box_profile_bidding_pricing input{
+    .nftDescription_box_profile_bidding_box_pricing input{
         font-size: 1rem;
     }
     .nftDescription_box_profile_bidding_auctioning_box{

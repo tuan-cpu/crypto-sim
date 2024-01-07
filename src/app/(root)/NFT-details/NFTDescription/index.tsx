@@ -47,13 +47,12 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
     settleAuction,
     bid,
     cancelListNFT,
-    cancelAuction
+    cancelAuction,
   } = useNFTContext();
   const { wallet } = useConnectWalletContext();
   const [social, setSocial] = useState(false);
   const [transfer, setTransfer] = useState(false);
   const [history, setHistory] = useState(true);
-  const [provenance, setProvenance] = useState(false);
   const [owner, setOwner] = useState(false);
   const [openPricing, setOpenPricing] = useState(false);
   const [openAuctioning, setOpenAuctioning] = useState(false);
@@ -96,15 +95,9 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
     const btnText = inputText.innerText;
     if (btnText == "Bid History") {
       setHistory(true);
-      setProvenance(false);
-      setOwner(false);
-    } else if (btnText == "Provenance") {
-      setHistory(false);
-      setProvenance(true);
       setOwner(false);
     } else {
       setHistory(false);
-      setProvenance(false);
       setOwner(true);
     }
   };
@@ -127,7 +120,7 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
 
     // Compare the two timestamps
     return providedTime <= currentTime;
-}
+  };
   return (
     <div className={Style.nftDescription}>
       <div className={Style.nftDescription_box}>
@@ -284,46 +277,42 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                   </div>
                 )}
               </div>
-              {(wallet.toLowerCase() == nft?.seller.toLowerCase() || wallet.toLowerCase() == nft?.highestBidder.toLowerCase()) 
-              && isAuctionTimeEnded(nft.endTimestamp) ? (
+              {(wallet.toLowerCase() == nft?.seller.toLowerCase() ||
+                wallet.toLowerCase() == nft?.highestBidder.toLowerCase()) &&
+              isAuctionTimeEnded(nft.endTimestamp) ? (
                 <Button
                   btnText="Settle Auction"
                   handleClick={async () => {
                     await settleAuction(nft.tokenId);
                     await setNewNotifications(nft?.seller, {
                       message: `Your ${nft?.metadata.name} had been sold for ${nft?.highestBid} ETH`,
-                      timestamp: new Date().getTime()
-                    })
+                      timestamp: new Date().getTime(),
+                    });
                     await setNewNotifications(nft?.highestBidder, {
                       message: `You won the auction of ${nft?.metadata.name} with a bid of ${nft?.highestBid} ETH`,
-                      timestamp: new Date().getTime()
-                    })
+                      timestamp: new Date().getTime(),
+                    });
                   }}
                   icon={undefined}
                   classStyle={undefined}
                 />
               ) : (
-                <Button btnText="Cancel Auction" handleClick={async () => {
-                  await cancelAuction(nft.tokenId);
-                  await setNewNotifications(wallet, {
-                    message: `Your auction for ${nft?.metadata.name} had been cancelled`,
-                    timestamp: new Date().getTime()
-                  })
-                }} icon={undefined} classStyle={Style.button}/>
+                <Button
+                  btnText="Cancel Auction"
+                  handleClick={async () => {
+                    await cancelAuction(nft.tokenId);
+                    await setNewNotifications(wallet, {
+                      message: `Your auction for ${nft?.metadata.name} had been cancelled`,
+                      timestamp: new Date().getTime(),
+                    });
+                  }}
+                  icon={undefined}
+                  classStyle={Style.button}
+                />
               )}
             </div>
           ) : (
             <div className={Style.nftDescription_box_profile_bidding}>
-              <div className={Style.nftDescription_box_profile_bidding_price}>
-                <div
-                  className={Style.nftDescription_box_profile_bidding_price_bid}
-                >
-                  <small>Price</small>
-                  <p>
-                    {nft.price > 0 ? nft.price : nft.metadata.mint_price} ETH
-                  </p>
-                </div>
-              </div>
               <div className={Style.nftDescription_box_profile_bidding_button}>
                 {wallet.toLowerCase() == nft?.escrow.toLowerCase() ? (
                   <div
@@ -353,13 +342,18 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                 ) : (
                   <>
                     {wallet.toLowerCase() == nft?.seller?.toLowerCase() ? (
-                      <Button btnText="Cancel selling" handleClick={async() => {
-                        await cancelListNFT(nft.tokenId);
-                        await setNewNotifications(wallet, {
-                          message: `Your ${nft?.metadata.name} had been withdrawn from listing`,
-                          timestamp: new Date().getTime()
-                        })
-                      }} icon={undefined} classStyle={Style.button}/>
+                      <Button
+                        btnText="Cancel selling"
+                        handleClick={async () => {
+                          await cancelListNFT(nft.tokenId);
+                          await setNewNotifications(wallet, {
+                            message: `Your ${nft?.metadata.name} had been withdrawn from listing`,
+                            timestamp: new Date().getTime(),
+                          });
+                        }}
+                        icon={undefined}
+                        classStyle={Style.button}
+                      />
                     ) : (
                       <div
                         className={
@@ -368,12 +362,16 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                       >
                         <Button
                           btnText="Buy NFT"
-                          handleClick={async() => {
+                          handleClick={async () => {
                             await buyNFT(nft.tokenId, nft.price);
                             await setNewNotifications(wallet, {
                               message: `You have purchase ${nft?.metadata.name} using ${nft.price} ETH`,
-                              timestamp: new Date().getTime()
-                            })
+                              timestamp: new Date().getTime(),
+                            });
+                            await setNewNotifications(nft?.seller, {
+                              message: `${nft?.metadata.name} had been sold for ${nft.price} ETH`,
+                              timestamp: new Date().getTime(),
+                            });
                           }}
                           icon={<FaPercentage />}
                           classStyle={Style.button}
@@ -384,16 +382,28 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                 )}
               </div>
               {openPricing ? (
-                <div
-                  className={Style.nftDescription_box_profile_bidding_pricing}
-                >
-                  <input
-                    type="number"
-                    placeholder="ETH"
-                    step="0.001"
-                    onChange={(e) => setPrice(Number(e.target.value))}
+                <div className={Style.nftDescription_box_profile_bidding_box}>
+                  <div className={Style.nftDescription_box_profile_bidding_box_pricing}>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      step="0.001"
+                      onChange={(e) => setPrice(Number(e.target.value))}
+                    />
+                    <p>ETH</p>
+                  </div>
+                  <Button
+                    btnText="Confirm"
+                    handleClick={async () => {
+                      await listNFT(nft?.tokenId, price);
+                      await setNewNotifications(wallet, {
+                        message: `Your ${nft?.metadata.name} had been listed for ${price} ETH`,
+                        timestamp: new Date().getTime(),
+                      });
+                    }}
+                    icon={undefined}
+                    classStyle={Style.button_confirm}
                   />
-                  <p>ETH</p>
                 </div>
               ) : (
                 ""
@@ -406,11 +416,11 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                 >
                   <p>Minimum Price</p>
                   <div
-                    className={Style.nftDescription_box_profile_bidding_pricing}
+                    className={Style.nftDescription_box_profile_bidding_box_pricing}
                   >
                     <input
                       type="number"
-                      placeholder="ETH"
+                      placeholder="0"
                       step="0.001"
                       onChange={(e) => setPrice(Number(e.target.value))}
                     />
@@ -478,22 +488,6 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
               ) : (
                 ""
               )}
-              {openPricing ? (
-                <Button
-                  btnText="Confirm"
-                  handleClick={async () => {
-                    await listNFT(nft?.tokenId, price);
-                    await setNewNotifications(wallet, {
-                      message: `Your ${nft?.metadata.name} had been listed for ${price} ETH`,
-                      timestamp: new Date().getTime()
-                    })
-                  }}
-                  icon={undefined}
-                  classStyle={Style.button_confirm}
-                />
-              ) : (
-                ""
-              )}
               {openAuctioning ? (
                 <Button
                   btnText="Confirm"
@@ -508,12 +502,16 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
                       durationInSecond
                     );
                     await setNewNotifications(wallet, {
-                      message: `Your auction for ${nft?.metadata.name} had been created and 
-                      would run for ${duration.day? `${duration.day} days `: ''}
-                      ${duration.hour? `${duration.hour} hours `: ''}
-                      ${duration.minute? `${duration.minute} minutes`: ''}`,
-                      timestamp: new Date().getTime()
-                    })
+                      message: `Your auction for ${
+                        nft?.metadata.name
+                      } had been created and 
+                      would run for ${
+                        duration.day ? `${duration.day} days ` : ""
+                      }
+                      ${duration.hour ? `${duration.hour} hours ` : ""}
+                      ${duration.minute ? `${duration.minute} minutes` : ""}`,
+                      timestamp: new Date().getTime(),
+                    });
                   }}
                   icon={undefined}
                   classStyle={Style.button_confirm}
@@ -527,9 +525,6 @@ const NFTDescription: React.FC<Props> = ({ nft }) => {
         <div className={Style.nftDescription_box_profile_bidding_tabs}>
           <button type="button" onClick={(e) => openTabs(e)}>
             Bid History
-          </button>
-          <button type="button" onClick={(e) => openTabs(e)}>
-            Provenance
           </button>
           <button type="button" onClick={(e) => openTabs(e)}>
             Owner

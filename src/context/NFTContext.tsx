@@ -274,8 +274,9 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
     const weiPrice = ethToWei(price.toString());
     const listingFee = ethers.utils.parseEther("0.025");
     const sentValue = weiPrice.add(listingFee);
-    await nftContract.approve(marketContract.address, tokenId);
-    return await marketContract.listNFT(tokenId, weiPrice, {
+    const approvalTx = await nftContract.approve(marketContract.address, tokenId);
+    await approvalTx.wait(); // Wait for the approval transaction to be mined
+    await marketContract.listNFT(tokenId, weiPrice, {
       value: sentValue,
     });
   };
@@ -384,12 +385,18 @@ const NFTContextProvider: React.FC<NFTContextProviderProps> = ({
   ) => {
     const nftContract = await connectContract('nft');
     const auctionContract = await connectContract('auction');
-    await nftContract.approve(auctionContract.address, tokenId);
+  
+    // Approve NFT transfer
+    const approvalTx = await nftContract.approve(auctionContract.address, tokenId);
+    await approvalTx.wait(); // Wait for the approval transaction to be mined
+  
+    // Create auction
     const weiPrice = ethToWei(price);
     await auctionContract.createAuction(tokenId, weiPrice, duration, {
       value: ethers.utils.parseEther("0.025"),
     });
   };
+  
   const cancelAuction = async (tokenId: number) => {
     const auctionContract = await connectContract('auction');
     return await auctionContract.cancelAuction(tokenId);
