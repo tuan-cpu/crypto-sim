@@ -28,10 +28,10 @@ const Sidebar: React.FC<SidebarProps> = ({ setOpenSideBar, wallet, connectWallet
   const [openHelp, setOpenHelp] = useState(false);
 
   const discover = [
-    {
-      name: "Collection",
-      link: "collection",
-    },
+    // {
+    //   name: "Collection",
+    //   link: "collection",
+    // },
     {
       name: "Search",
       link: "search",
@@ -40,22 +40,22 @@ const Sidebar: React.FC<SidebarProps> = ({ setOpenSideBar, wallet, connectWallet
       name: "Author Profile",
       link: "author-profile",
     },
-    {
-      name: "NFT Details",
-      link: "NFT-details",
-    },
+    // {
+    //   name: "NFT Details",
+    //   link: "NFT-details",
+    // },
     {
       name: "Account Setting",
       link: "account-settings",
     },
-    {
-      name: "Connect Wallet",
-      link: "connect-wallet",
-    },
-    {
-      name: "Blog",
-      link: "blog",
-    },
+    // {
+    //   name: "Connect Wallet",
+    //   link: "connect-wallet",
+    // },
+    // {
+    //   name: "Blog",
+    //   link: "blog",
+    // },
   ];
 
   const helpCenter = [
@@ -67,14 +67,14 @@ const Sidebar: React.FC<SidebarProps> = ({ setOpenSideBar, wallet, connectWallet
       name: "Contact Us",
       link: "contact-us",
     },
-    {
-      name: "Sign Up",
-      link: "sign-up",
-    },
-    {
-      name: "Sign In",
-      link: "sign-in",
-    },
+    // {
+    //   name: "Sign Up",
+    //   link: "sign-up",
+    // },
+    // {
+    //   name: "Sign In",
+    //   link: "sign-in",
+    // },
     {
       name: "Subscription",
       link: "subscription",

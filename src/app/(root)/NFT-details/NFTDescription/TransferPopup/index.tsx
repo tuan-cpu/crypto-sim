@@ -29,7 +29,7 @@ const TransferPopup:React.FC<Props> = ({nftName, tokenId, owner, close}) => {
               <MdOutlineDelete onClick={() => setAddressTo("")}/>
             </div>
           </div>
-          <Button btnText="Transfer" handleClick={async () => await transferNFT(owner, addressTo, tokenId)} icon={undefined} classStyle={Style.button}/>
+          <Button btnText="Transfer" handleClick={async () => await transferNFT(addressTo, tokenId)} icon={undefined} classStyle={Style.button}/>
         </div>
       </div>
     </div>
