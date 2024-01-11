@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { HiOutlineMail } from "react-icons/hi";
-import { MdOutlineHttp, MdOutlineContentCopy, MdWallet } from "react-icons/md";
+import { MdOutlineHttp, MdOutlineContentCopy, MdWallet, MdCheck } from "react-icons/md";
 import {
   TiSocialFacebook,
   TiSocialTwitter,
@@ -24,6 +24,19 @@ interface Props {
   handleSubmit: () => void;
 }
 const Form: React.FC<Props> = ({ profileInfo, handleChange, handleSubmit }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = async () => {
+    if (inputRef.current) {
+      try {
+        await navigator.clipboard.writeText(inputRef.current.value);
+        setCopied(true);
+      } catch (err) {
+        console.error('Unable to copy to clipboard', err);
+      }
+    }
+  };
   return (
     <div className={Style.form}>
       <div className={Style.form_box}>
@@ -157,6 +170,7 @@ const Form: React.FC<Props> = ({ profileInfo, handleChange, handleSubmit }) => {
                 <MdWallet />
               </div>
               <input
+                ref={inputRef}
                 type="text"
                 placeholder="Your wallet address"
                 defaultValue={profileInfo.wallet}
@@ -164,7 +178,7 @@ const Form: React.FC<Props> = ({ profileInfo, handleChange, handleSubmit }) => {
                 onChange={(e) => handleChange(e, "wallet")}
               />
               <div className={Style.form_box_input_box_icon}>
-                <MdOutlineContentCopy />
+                {copied ? <MdCheck/> : <MdOutlineContentCopy onClick={copyToClipboard}/>}
               </div>
             </div>
           </div>
